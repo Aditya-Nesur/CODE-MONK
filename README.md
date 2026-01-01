@@ -54,3 +54,6 @@ If this helped you:
 - 🔁 Share with fellow developers
 
 Happy Coding 💻✨
+
+⚠️ Note: This repository is read-only for viewers.  
+Feel free to fork and customize for your own projects.
