@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Glass Card</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Poppins,sans-serif}
+body{
+  height:100vh;display:flex;justify-content:center;align-items:center;
+  background:radial-gradient(circle at top,#050b12,#0b1f2a,#09141d);
+  overflow:hidden
+}
+.frame{
+  position:relative;width:360px;height:640px;
+  display:flex;justify-content:center;align-items:center
+}
+.frame::before{
+  content:"";position:absolute;width:340px;height:340px;
+  background:radial-gradient(circle,rgba(0,255,200,.25),rgba(0,150,255,.15),transparent 70%);
+  filter:blur(60px);animation:pulse 6s ease-in-out infinite
+}
+@keyframes pulse{0%,100%{opacity:.6}50%{opacity:1}}
+
+.card{
+  position:relative;width:300px;padding:30px;border-radius:28px;
+  background:linear-gradient(135deg,rgba(255,255,255,.35),rgba(255,255,255,.08));
+  backdrop-filter:blur(30px);
+  border:1px solid rgba(255,255,255,.45);
+  box-shadow:0 40px 90px rgba(0,0,0,.75),inset 0 1px 1px rgba(255,255,255,.6);
+  color:#fff;overflow:hidden;z-index:1;
+  transition:transform .6s cubic-bezier(.2,.8,.2,1)
+}
+.card::after{
+  content:"";position:absolute;inset:-1px;border-radius:inherit;
+  background:linear-gradient(135deg,#00ffd5,#00b3ff,#7f7cff);
+  opacity:.45;z-index:-1
+}
+.card::before{
+  content:"";position:absolute;inset:-60%;
+  background:linear-gradient(120deg,transparent,rgba(255,255,255,.45),transparent);
+  transform:translateX(-100%) rotate(25deg);
+  transition:transform 1s ease
+}
+
+.icon{
+  width:60px;height:60px;margin-bottom:18px;border-radius:18px;
+  display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(135deg,rgba(0,255,200,.35),rgba(0,150,255,.35));
+  border:1px solid rgba(255,255,255,.55);
+  backdrop-filter:blur(12px);font-size:28px
+}
+
+h2{font-size:22px;font-weight:600;margin-bottom:6px}
+p{font-size:14px;opacity:.88;line-height:1.6}
+
+.divider{
+  height:1px;margin:20px 0;
+  background:linear-gradient(90deg,transparent,rgba(0,255,200,.8),rgba(0,150,255,.8),transparent)
+}
+
+.btn{
+  display:inline-block;padding:13px 20px;border-radius:16px;
+  font-size:14px;font-weight:500;color:#fff;text-decoration:none;
+  background:linear-gradient(135deg,rgba(0,255,200,.45),rgba(0,150,255,.45));
+  border:1px solid rgba(255,255,255,.6);
+  backdrop-filter:blur(12px);
+  box-shadow:0 10px 30px rgba(0,255,200,.35);
+  transition:.3s
+}
+.btn:hover{transform:translateY(-3px);box-shadow:0 20px 45px rgba(0,255,200,.6)}
+.card:hover{transform:translateY(-20px) scale(1.03)}
+.card:hover::before{transform:translateX(100%) rotate(25deg)}
+</style>
+</head>
+
+<body>
+<div class="frame">
+  <div class="card">
+    <div class="icon">💎</div>
+
+    <h2>Creator Pro</h2>
+    <p>Everything you need to build, analyze, and scale your content — crafted for professionals.</p>
+
+    <div class="divider"></div>
+
+    <p style="font-size:13px;opacity:.8;margin-bottom:12px">
+      ✔ Advanced analytics<br>
+      ✔ Cloud sync<br>
+      ✔ Priority support
+    </p>
+
+    <p style="font-size:18px;font-weight:600;margin-bottom:10px">
+      ₹799 <span style="font-size:12px;opacity:.7">/ month</span>
+    </p>
+
+    <a class="btn" href="#">Upgrade to Pro</a>
+  </div>
+</div>
+</body>
+</html>
