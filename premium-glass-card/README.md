@@ -10,7 +10,7 @@ A high-end **glassmorphism pricing card UI** designed for SaaS, creators, and mo
 - Pure HTML & CSS (no JS)
 
 ## 📸 Preview
-![Preview](preview.png)
+![Preview](preview (3).png)
 
 ## 🛠 How to Use
 1. Open `index.html`
