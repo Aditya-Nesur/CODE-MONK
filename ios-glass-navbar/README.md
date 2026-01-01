@@ -10,7 +10,7 @@ A modern **iOS-inspired glassmorphism navigation bar** built using pure HTML & C
 - No JavaScript required
 
 ## 📸 Preview
-![Preview](preview.png)
+![Preview](preview (2).png)
 
 ## 🛠 How to Use
 1. Open `index.html`
