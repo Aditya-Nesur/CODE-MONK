@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Aurora Loader – Full Screen</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Poppins,sans-serif;
+}
+
+body{
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:
+    radial-gradient(circle at 20% 10%, rgba(124,247,255,.12), transparent 35%),
+    radial-gradient(circle at 80% 20%, rgba(127,124,255,.10), transparent 40%),
+    radial-gradient(circle at 50% 80%, rgba(93,255,178,.08), transparent 45%),
+    #000000; /* Pure black base */
+  animation:bgDrift 18s ease-in-out infinite;
+  overflow:hidden;
+}
+
+/* Loader */
+.loader{
+  position:relative;
+  width:150px;
+  height:150px;
+  border-radius:50%;
+  animation:breath 4.6s ease-in-out infinite;
+}
+
+/* Ambient glow */
+.aura{
+  position:absolute;
+  inset:-30px;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(124,247,255,.25),rgba(124,124,255,.18),transparent 70%);
+  filter:blur(25px);
+  animation:auraPulse 5.2s ease-in-out infinite;
+}
+
+/* Glass ring */
+.loader::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:50%;
+  border:1.6px solid rgba(255,255,255,.22);
+  box-shadow:inset 0 0 24px rgba(255,255,255,.08);
+}
+
+/* Aurora sweep */
+.loader::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:50%;
+  background:conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    #7cf7ff 40deg,
+    #7f7cff 95deg,
+    #5dffb2 150deg,
+    transparent 220deg
+  );
+  mask:radial-gradient(circle, transparent 62%, #000 65%);
+  animation:auroraSpin 2.8s cubic-bezier(.55,0,.25,1) infinite;
+  filter:drop-shadow(0 0 20px rgba(124,247,255,.6));
+}
+
+/* Specular highlight */
+.highlight{
+  position:absolute;
+  inset:0;
+  border-radius:50%;
+  background:conic-gradient(
+    from -90deg,
+    transparent 0deg,
+    rgba(255,255,255,.7) 10deg,
+    transparent 22deg
+  );
+  mask:radial-gradient(circle, transparent 62%, #000 65%);
+  animation:highlightSweep 6s ease-in-out infinite;
+  opacity:.45;
+}
+
+/* Twinkle particles */
+.twinkles span{
+  position:absolute;
+  width:4px;
+  height:4px;
+  background:white;
+  border-radius:50%;
+  opacity:.4;
+  animation:twinkle 3.5s ease-in-out infinite;
+  box-shadow:0 0 6px rgba(255,255,255,.8);
+}
+
+/* Twinkle positions */
+.twinkles span:nth-child(1){ top:-8px; left:50%; animation-delay:0s; }
+.twinkles span:nth-child(2){ right:-8px; top:50%; animation-delay:1.2s; }
+.twinkles span:nth-child(3){ bottom:-8px; left:50%; animation-delay:2.4s; }
+.twinkles span:nth-child(4){ left:-8px; top:50%; animation-delay:.6s; }
+
+/* Core */
+.core{
+  position:absolute;
+  inset:45px;
+  border-radius:50%;
+  background:radial-gradient(circle at 30% 30%,rgba(255,255,255,.35),rgba(124,247,255,.35),transparent 70%);
+  animation:coreFloat 3.6s ease-in-out infinite;
+}
+
+/* Animations */
+@keyframes auroraSpin{
+  0%{ transform:rotate(0deg); }
+  50%{ transform:rotate(210deg); }
+  100%{ transform:rotate(360deg); }
+}
+
+@keyframes highlightSweep{
+  0%,70%{ opacity:0; }
+  85%{ opacity:.6; }
+  100%{ transform:rotate(360deg); opacity:0; }
+}
+
+@keyframes twinkle{
+  0%,100%{ transform:scale(.6); opacity:.2; }
+  50%{ transform:scale(1.4); opacity:.9; }
+}
+
+@keyframes coreFloat{
+  0%,100%{ transform:scale(.9); opacity:.45; }
+  50%{ transform:scale(1); opacity:.75; }
+}
+
+@keyframes auraPulse{
+  0%,100%{ transform:scale(1); opacity:.35; }
+  50%{ transform:scale(1.1); opacity:.55; }
+}
+
+@keyframes breath{
+  0%,100%{ transform:scale(1); }
+  50%{ transform:scale(1.05); }
+}
+
+@keyframes bgDrift{
+  0%,100%{
+    background-position:
+      20% 10%,
+      80% 20%,
+      50% 80%,
+      center;
+  }
+  50%{
+    background-position:
+      25% 15%,
+      75% 25%,
+      50% 75%,
+      center;
+  }
+}
+</style>
+</head>
+
+<body>
+  <div class="loader">
+    <div class="aura"></div>
+    <div class="highlight"></div>
+
+    <div class="twinkles">
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+
+    <div class="core"></div>
+  </div>
+</body>
+</html>
