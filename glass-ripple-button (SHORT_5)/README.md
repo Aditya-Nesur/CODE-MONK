@@ -10,7 +10,7 @@ A modern **glassmorphism button with click ripple and success animation** built 
 - Smooth hover & click transitions
 
 ## 📸 Preview
-![Preview](preview(5).png)
+![Preview](preview-(5).png)
 
 ## 🛠 How to Use
 1. Open `index.html`
