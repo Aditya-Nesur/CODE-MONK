@@ -13,7 +13,7 @@ Built using **HTML, CSS & JavaScript**, featuring:
 - Easy to copy & customize
 
 ## 📸 Preview
-![Preview](preview.png)
+![Preview](preview(7).png)
 
 ## 🛠 How to Use
 1. Open `index.html`  
