@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Celebration Pricing Cards</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:'Poppins',sans-serif;
+}
+
+html,body{
+  width:100%;
+  height:100%;
+  overflow:hidden;
+}
+
+body{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:
+    radial-gradient(circle at top,#00f2fe33,transparent 40%),
+    #020617;
+}
+
+/* frame */
+.frame{
+  width:360px;
+  height:640px;
+  padding:26px 18px;
+  border-radius:22px;
+  background:black;
+  backdrop-filter:blur(18px);
+  box-shadow:0 30px 80px rgba(0,0,0,.6);
+  position:relative;
+  z-index:2;
+}
+
+/* cards */
+.pricing{
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+}
+
+.card{
+  position:relative;
+  padding:16px;
+  border-radius:18px;
+  background:linear-gradient(180deg,rgba(255,255,255,.18),rgba(255,255,255,.05));
+  color:#fff;
+  text-align:center;
+  transition:0.35s ease, box-shadow 0.35s ease, transform 0.35s ease;
+  cursor:pointer;
+}
+
+/* glow border for hover */
+.card:hover{
+  transform:translateY(-4px) scale(1.02);
+  box-shadow:0 20px 50px rgba(0,242,254,0.35);
+}
+
+.card h3{font-size:17px;margin-bottom:6px}
+.price{
+  font-size:26px;
+  font-weight:600;
+  background:linear-gradient(135deg,#00f2fe,#4facfe);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  transition:0.35s ease;
+}
+.card p{font-size:12.5px;opacity:.85;margin:12px 0}
+
+button{
+  width:100%;
+  padding:10px;
+  border:none;
+  border-radius:30px;
+  background:linear-gradient(135deg,#00f2fe,#4facfe);
+  font-weight:600;
+  cursor:pointer;
+  transition:0.35s ease, box-shadow 0.35s ease;
+}
+
+/* glow on button hover */
+button:hover{
+  box-shadow:0 4px 18px rgba(0,242,254,0.55);
+}
+
+/* ================= MOST POPULAR PRO CARD ================= */
+.pro{
+  position:relative;
+  animation:proPulse 2s infinite ease-in-out;
+}
+
+/* ribbon */
+.pro::after{
+  content:'MOST POPULAR';
+  position:absolute;
+  top:12px;
+  right:-38px;
+  width:140px;
+  height:24px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:linear-gradient(135deg,#00f2fe,#4facfe);
+  color:#000;
+  font-size:9px;
+  font-weight:600;
+  letter-spacing:.7px;
+  transform:rotate(45deg);
+  clip-path:polygon(
+    8% 0,
+    92% 0,
+    100% 50%,
+    92% 100%,
+    8% 100%,
+    0 50%
+  );
+  box-shadow:0 4px 14px rgba(0,242,254,.5);
+  z-index:3;
+}
+
+/* pulsing/bulge animation for Pro card */
+@keyframes proPulse{
+  0%,100%{transform:scale(1)}
+  50%{transform:scale(1.05)}
+}
+
+/* ================= POPUP ================= */
+
+.popup{
+  position:fixed;
+  inset:0;
+  background:rgba(2,6,23,.75);
+  backdrop-filter:blur(8px);
+  z-index:100;
+}
+
+.popup-box{
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  background:rgba(255,255,255,.08);
+  border-radius:22px;
+  padding:28px;
+  text-align:center;
+  color:#fff;
+  box-shadow:0 30px 80px rgba(0,0,0,.6);
+  z-index:10;
+}
+
+/* BASIC ✨ */
+.sparkle{
+  position:absolute;
+  width:6px;
+  height:6px;
+  border-radius:50%;
+  background:#4facfe;
+  animation:sparkleUp 2s ease-out forwards;
+}
+
+/* PRO 🚀 */
+.mini-rocket{
+  position:absolute;
+  font-size:26px;
+  animation:rocketUp 2s ease-out forwards;
+  filter:drop-shadow(0 0 10px #4facfe);
+}
+
+/* PREMIUM 🎉 */
+.confetti{
+  position:absolute;
+  width:8px;
+  height:12px;
+  border-radius:2px;
+  animation:confettiUp 2s ease-out forwards;
+}
+
+/* animations */
+@keyframes sparkleUp{
+  to{
+    transform:translateY(-180px);
+    opacity:0;
+  }
+}
+
+@keyframes rocketUp{
+  to{
+    transform:translateY(-520px) scale(1.1);
+    opacity:0;
+  }
+}
+
+@keyframes confettiUp{
+  to{
+    transform:
+      translate(var(--x), -520px)
+      rotate(720deg);
+    opacity:0;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="frame" id="frame">
+  <div class="pricing">
+
+    <div class="card basic">
+      <h3>Basic</h3>
+      <div class="price">₹499</div>
+      <p>Clean landing page</p>
+      <button onclick="basic()">Select Basic</button>
+    </div>
+
+    <div class="card pro">
+      <h3>Pro</h3>
+      <div class="price">₹999</div>
+      <p>Modern UI + animations</p>
+      <button onclick="pro()">Select Pro</button>
+    </div>
+
+    <div class="card premium">
+      <h3>Premium</h3>
+      <div class="price">₹1999</div>
+      <p>Complete website solution</p>
+      <button onclick="premium()">Select Premium</button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+function closePopup(){
+  document.querySelector('.popup')?.remove();
+}
+
+function frameBounds(){
+  return document.getElementById('frame').getBoundingClientRect();
+}
+
+/* BASIC ✨ FRAME SPARKLES */
+function basic(){
+  const popup=document.createElement('div');
+  popup.className='popup';
+  popup.innerHTML=`<div class="popup-box">
+    <h2>✨ Basic Selected</h2><p>Simple & clean start</p></div>`;
+  document.body.appendChild(popup);
+
+  const frame=frameBounds();
+
+  const interval=setInterval(()=>{
+    for(let i=0;i<10;i++){
+      const s=document.createElement('div');
+      s.className='sparkle';
+      s.style.left=frame.left+Math.random()*frame.width+'px';
+      s.style.top=frame.bottom+'px';
+      popup.appendChild(s);
+    }
+  },300);
+
+  setTimeout(()=>{clearInterval(interval);closePopup();},2200);
+}
+
+/* PRO 🚀 FRAME ROCKET STREAM */
+function pro(){
+  const popup=document.createElement('div');
+  popup.className='popup';
+  popup.innerHTML=`<div class="popup-box">
+    <h2>🚀 Pro Activated</h2><p>Boosting your power</p></div>`;
+  document.body.appendChild(popup);
+
+  const frame=frameBounds();
+
+  const interval=setInterval(()=>{
+    for(let i=0;i<3;i++){
+      const r=document.createElement('div');
+      r.className='mini-rocket';
+      r.innerHTML='🚀';
+      r.style.left=frame.left+Math.random()*frame.width+'px';
+      r.style.top=frame.bottom+'px';
+      popup.appendChild(r);
+    }
+  },350);
+
+  setTimeout(()=>{clearInterval(interval);closePopup();},2600);
+}
+
+/* PREMIUM 🎉 FRAME POPPERS */
+function premium(){
+  const popup=document.createElement('div');
+  popup.className='popup';
+  popup.innerHTML=`<div class="popup-box">
+    <h2>🎉 Premium Unlocked!</h2><p>Elite experience</p></div>`;
+  document.body.appendChild(popup);
+
+  const frame=frameBounds();
+
+  const interval=setInterval(()=>{
+    for(let i=0;i<22;i++){
+      const c=document.createElement('div');
+      c.className='confetti';
+      c.style.left=frame.left+Math.random()*frame.width+'px';
+      c.style.top=frame.bottom+'px';
+      c.style.setProperty('--x',`${(Math.random()-.5)*180}px`);
+      c.style.background=`hsl(${Math.random()*360},90%,60%)`;
+      popup.appendChild(c);
+    }
+  },350);
+
+  setTimeout(()=>{clearInterval(interval);closePopup();},3200);
+}
+</script>
+
+</body>
+</html>
