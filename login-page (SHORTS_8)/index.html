@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Ultra Glass Login – Neon Monkey Mascot</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:'Poppins',sans-serif;
+}
+
+/* ===== BODY ===== */
+body{
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:
+    radial-gradient(circle at 50% 20%, rgba(0,242,254,.35), transparent 45%),
+    radial-gradient(circle at 50% 80%, rgba(79,172,254,.35), transparent 45%),
+    linear-gradient(135deg, #050b1f, #020617);
+  overflow:hidden;
+}
+
+/* ===== FLOATING BLOBS ===== */
+.blob{
+  position:absolute;
+  width:260px;
+  height:260px;
+  border-radius:50%;
+  filter: blur(90px);
+  opacity:.5;
+  animation: float 14s infinite alternate ease-in-out;
+}
+.blob.one{ background:#00f2fe; top:15%; left:20%; }
+.blob.two{ background:#4facfe; bottom:15%; right:20%; animation-delay:5s; }
+
+@keyframes float{ to{ transform: translateY(-40px); } }
+
+/* ===== FRAME ===== */
+.frame{
+  width:360px;
+  height:640px;
+  border-radius:28px;
+  background: black;
+  backdrop-filter: blur(22px);
+  border:1px solid rgba(255,255,255,0.18);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  box-shadow:0 40px 80px rgba(0,0,0,.6);
+  position:relative;
+  overflow:hidden;
+}
+
+/* ===== LOGIN CARD ===== */
+.login{
+  width:280px;
+  padding:80px 25px 35px;
+  border-radius:22px;
+  background: radial-gradient(circle at 50% 20%, rgba(0,242,254,.35), transparent 45%),
+    radial-gradient(circle at 50% 80%, rgba(79,172,254,.35), transparent 45%),
+    linear-gradient(135deg, #050b1f, #020617);
+  backdrop-filter: blur(26px);
+  border:1px solid rgba(255,255,255,.25);
+  color:#fff;
+  text-align:center;
+  position:relative;
+  transition:.6s ease;
+  z-index:2;
+}
+
+/* ===== MONKEY ===== */
+.monkey{
+  position:absolute;
+  top:-58px;
+  left:50%;
+  transform:translateX(-50%) scale(.4);
+  width:92px;
+  height:92px;
+  background:rgba(255,255,255,.95);
+  border-radius:50%;
+  box-shadow:0 15px 35px rgba(0,0,0,.4);
+  opacity:0;
+  animation: faceReveal .6s ease forwards;
+  overflow:hidden;
+  z-index:5;
+}
+
+/* 👂 EARS BEHIND HEAD */
+.monkey-ear{
+  position:absolute;
+  width:26px;
+  height:26px;
+  background:rgba(255,255,255,.95);
+  border-radius:50%;
+  top:30px;
+  z-index:1; /* behind the face */
+}
+.monkey-ear.left{ left:-18px; }
+.monkey-ear.right{ right:-18px; }
+
+/* 👀 EYES */
+.eye{
+  position:absolute;
+  top:38px;
+  width:10px;
+  height:10px;
+  background:#020617;
+  border-radius:50%;
+  transition:.35s ease;
+  z-index:6;
+}
+.eye.left{ left:28px }
+.eye.right{ right:28px }
+
+/* 👀 EMAIL FOCUS — EYES LOOK DOWN */
+.login:has(input[type="email"]:focus) .eye{
+  transform: translateY(6px) scaleY(.7);
+}
+
+/* 🙈 PASSWORD — RIBBON COVERS EYES */
+.ribbon{
+  position:absolute;
+  top:36px;
+  left:50%;
+  transform:translateX(-50%) scaleX(0);
+  width:82px;
+  height:18px;
+  background:#020617;
+  border-radius:20px;
+  transition:.4s cubic-bezier(.4,0,.2,1);
+  z-index:7;
+}
+.login:has(input[type="password"]:focus) .ribbon{
+  transform:translateX(-50%) scaleX(1);
+}
+.login:has(input[type="password"]:focus) .eye{
+  opacity:0;
+}
+
+/* ===== STAGGERED REVEAL ===== */
+h2, .input-box, button, p, .warning{
+  opacity:0;
+  transform: translateY(30px);
+  animation: fadeUp .6s ease forwards;
+}
+h2{ animation-delay:.7s }
+.input-box:nth-of-type(1){ animation-delay:.9s }
+.input-box:nth-of-type(2){ animation-delay:1.05s }
+button{ animation-delay:1.2s }
+p{ animation-delay:1.35s }
+
+@keyframes faceReveal{
+  to{ opacity:1; transform:translateX(-50%) scale(1); }
+}
+@keyframes fadeUp{
+  to{ opacity:1; transform: translateY(0); }
+}
+
+/* ===== INPUTS ===== */
+.input-box{ margin-bottom:16px }
+
+input{
+  width:100%;
+  padding:13px 18px;
+  border-radius:30px;
+  border:none;
+  outline:none;
+  background: rgba(255,255,255,0.22);
+  color:#fff;
+}
+input:focus{
+  box-shadow:0 0 18px rgba(79,172,254,.9);
+}
+
+/* ===== BUTTON ===== */
+button{
+  width:100%;
+  padding:13px;
+  border:none;
+  border-radius:30px;
+  margin-top:10px;
+  background: linear-gradient(135deg,#00f2fe,#4facfe);
+  font-weight:600;
+  cursor:pointer;
+}
+
+/* ===== WARNING ===== */
+.warning{
+  font-size:12px;
+  color:#ffb4b4;
+  margin-top:10px;
+  min-height:16px;
+  z-index:2;
+}
+
+/* ===== WELCOME STATE ===== */
+.frame.success .login{
+  transform: scale(.85);
+  opacity:.15; /* more dimmed for realism */
+}
+.welcome{
+  position:absolute;
+  inset:0;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  opacity:0;
+  pointer-events:none;
+  transition:.6s ease;
+  z-index:10;
+  backdrop-filter: blur(18px); /* full background blur */
+  background: black; /* subtle dark overlay for realism */
+  border-radius:28px;
+}
+.frame.success .welcome{
+  opacity:1;
+}
+.welcome h1{
+  font-size:34px;
+  background:linear-gradient(135deg,#00f2fe,#4facfe);
+  -webkit-background-clip:text;
+  color:transparent;
+  animation:pulse 1.2s infinite alternate;
+}
+
+/* ===== CONTINUOUS CONFETTI ===== */
+.confetti{
+  position:absolute;
+  width:8px;
+  height:14px;
+  background:linear-gradient(135deg,#00f2fe,#4facfe);
+  animation: fall 3s linear forwards;
+  z-index:11; /* over the welcome overlay */
+}
+@keyframes fall{
+  to{ transform: translateY(700px) rotate(360deg); opacity:0; }
+}
+@keyframes pulse{
+  to{ transform:scale(1.08); }
+}
+</style>
+</head>
+
+<body>
+
+<div class="blob one"></div>
+<div class="blob two"></div>
+
+<div class="frame" id="frame">
+
+  <div class="login">
+    <div class="monkey">
+      <!-- EARS -->
+      <div class="monkey-ear left"></div>
+      <div class="monkey-ear right"></div>
+
+      <!-- Eyes & Ribbon -->
+      <div class="eye left"></div>
+      <div class="eye right"></div>
+      <div class="ribbon"></div>
+    </div>
+
+    <h2>Welcome Back</h2>
+
+    <div class="input-box">
+      <input id="email" type="email" placeholder="Email">
+    </div>
+    <div class="input-box">
+      <input id="password" type="password" placeholder="Password">
+    </div>
+
+    <button onclick="login()">Login</button>
+    <div class="warning" id="warning"></div>
+    <p>Don’t have an account? <span>Sign up</span></p>
+  </div>
+
+  <div class="welcome">
+    <h1>Welcome 🎉</h1>
+  </div>
+
+</div>
+
+<script>
+let confettiInterval;
+
+function login(){
+  const email = document.getElementById("email").value.trim();
+  const pass = document.getElementById("password").value.trim();
+  const warn = document.getElementById("warning");
+  const frame = document.getElementById("frame");
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  if(!email || !pass){
+    warn.textContent = "Please fill in all fields";
+    return;
+  }
+  if(!emailRegex.test(email)){
+    warn.textContent = "Please enter a valid email";
+    return;
+  }
+
+  warn.textContent = "";
+  frame.classList.add("success");
+
+  // Continuous confetti inside the frame over welcome overlay
+  confettiInterval = setInterval(()=>{
+    const c = document.createElement("div");
+    c.className = "confetti";
+    c.style.left = Math.random() * 340 + "px";
+    c.style.top = "-20px";
+    c.style.animationDuration = 2 + Math.random() * 1.5 + "s";
+    frame.appendChild(c);
+    setTimeout(()=>c.remove(), 4000);
+  }, 150); // every 150ms
+}
+</script>
+
+</body>
+</html>
