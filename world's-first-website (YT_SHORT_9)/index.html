@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>info.cern.ch — Then → Now</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+
+:root{
+  --neon1:#00f2fe;
+  --neon2:#8b5cf6;
+  --neon3:#ec4899;
+}
+
+/* ===== BODY ===== */
+body{
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:
+    radial-gradient(circle at 20% 20%, #00f2fe22, transparent 40%),
+    radial-gradient(circle at 80% 80%, #8b5cf622, transparent 40%),
+    linear-gradient(135deg,#070a14,#0b1022,#070a14);
+  overflow:hidden;
+  font-family:Poppins,sans-serif;
+  color:#fff;
+  cursor:default;
+}
+
+/* ===== GLOW ORBS ===== */
+.orb{
+  position:absolute;
+  width:300px;
+  height:300px;
+  border-radius:50%;
+  background:linear-gradient(135deg,var(--neon1),var(--neon2),var(--neon3));
+  filter:blur(120px);
+  opacity:.35;
+  animation:float 12s infinite alternate ease-in-out;
+}
+.orb:nth-child(1){top:-80px;left:-80px}
+.orb:nth-child(2){bottom:-80px;right:-80px;animation-delay:3s}
+
+@keyframes float{
+  from{transform:translateY(0)}
+  to{transform:translateY(60px)}
+}
+
+/* ===== TOGGLE ===== */
+input{display:none}
+
+.toggle{
+  position:absolute;
+  top:20px;
+  right:20px;
+  width:68px;
+  height:34px;
+  background:#d1d5db;
+  border-radius:30px;
+  cursor:pointer;
+  z-index:10;
+}
+
+.toggle::before{
+  content:"1991";
+  position:absolute;
+  width:30px;
+  height:30px;
+  border-radius:50%;
+  background:#fff;
+  top:2px;
+  left:2px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:10px;
+  transition:.6s cubic-bezier(.4,0,.2,1);
+}
+
+input:checked + .toggle{
+  background:linear-gradient(135deg,var(--neon1),var(--neon2),var(--neon3));
+}
+
+input:checked + .toggle::before{
+  content:"NOW";
+  transform:translateX(34px);
+}
+
+/* ===== FRAME ===== */
+.frame{
+  width:360px;
+  height:640px;
+  border-radius:30px;
+  overflow:hidden;
+  background:#fff;
+  position:relative;
+  transition:.9s cubic-bezier(.4,0,.2,1);
+  box-shadow:0 40px 120px rgba(0,0,0,.6);
+}
+
+/* ===== OLD ERA ===== */
+.site{
+  height:100%;
+  padding:26px;
+  font-family:"Times New Roman",serif;
+  color:#000;
+}
+
+.site h1{font-size:18px;margin-bottom:14px}
+.site p{font-size:13px;line-height:1.6;margin-bottom:14px}
+.site ul{padding-left:18px}
+.site li{font-size:13px;margin-bottom:10px}
+.site a{color:#0000ee;text-decoration:underline}
+
+/* ===== MODERN ERA ===== */
+input:checked ~ .frame{
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.22),rgba(255,255,255,.06));
+  backdrop-filter:blur(26px);
+}
+
+input:checked ~ .frame .site{
+  font-family:Poppins,sans-serif;
+  color:#fff;
+}
+
+input:checked ~ .frame h1{
+  font-size:22px;
+  font-weight:600;
+}
+
+input:checked ~ .frame a{
+  color:#7dd3fc;
+  text-decoration:none;
+}
+
+/* ===== HERO ===== */
+.hero{display:none}
+
+input:checked ~ .frame .hero{
+  display:block;
+  padding:18px;
+  margin-bottom:18px;
+  border-radius:22px;
+  background:
+    linear-gradient(135deg,rgba(255,255,255,.28),rgba(255,255,255,.06));
+  backdrop-filter:blur(16px);
+  box-shadow:0 20px 60px rgba(0,0,0,.45);
+}
+
+/* ===== MODERN LINKS ===== */
+input:checked ~ .frame ul{
+  padding-left:0;
+  display:grid;
+  gap:14px;
+}
+
+input:checked ~ .frame li{
+  list-style:none;
+  padding:16px 18px;
+  border-radius:22px;
+  background:
+    linear-gradient(135deg,rgba(255,255,255,.3),rgba(255,255,255,.05));
+  backdrop-filter:blur(16px);
+  box-shadow:0 25px 60px rgba(0,0,0,.45);
+  transition:.4s;
+}
+
+input:checked ~ .frame li:hover{
+  transform:translateY(-6px);
+}
+
+/* ===== CUSTOM CURSOR ===== */
+.cursor{
+  position:fixed;
+  width:10px;
+  height:10px;
+  border-radius:50%;
+  pointer-events:none;
+  background:var(--neon1);
+  box-shadow:
+    0 0 12px var(--neon1),
+    0 0 24px var(--neon2);
+  z-index:999;
+  opacity:0;
+  transition:opacity .3s ease;
+}
+
+
+/* ===== TRAIL PARTICLES ===== */
+.trail{
+  position:fixed;
+  width:12px;
+  height:12px;
+  border-radius:50%;
+  pointer-events:none;
+  background:linear-gradient(135deg,var(--neon1),var(--neon3));
+  filter:blur(2px);
+  opacity:.7;
+  animation:fade 1s linear forwards;
+}
+
+@keyframes fade{
+  to{
+    transform:scale(0);
+    opacity:0;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="orb"></div>
+<div class="orb"></div>
+
+<input type="checkbox" id="switch">
+<label for="switch" class="toggle"></label>
+
+<div class="frame">
+
+  <div class="site">
+
+    <div class="hero">
+      <h2>🧬 The World’s First Website — Reimagined</h2>
+    </div>
+
+    <h1>http://info.cern.ch</h1>
+
+    <p>
+      The home of the first website.
+      Created at CERN by Tim Berners-Lee.
+    </p>
+
+    <p>From here you can:</p>
+
+    <ul>
+      <li><a href="#">Browse the first website</a></li>
+      <li><a href="#">Use the line-mode browser</a></li>
+      <li><a href="#">Birth of the Web</a></li>
+      <li><a href="#">Learn about CERN</a></li>
+    </ul>
+
+  </div>
+</div>
+
+<div class="cursor" id="cursor"></div>
+
+<script>
+const cursor = document.getElementById("cursor");
+const toggle = document.getElementById("switch");
+
+/* Toggle era behavior */
+toggle.addEventListener("change", () => {
+  if (toggle.checked) {
+    document.body.style.cursor = "none";
+    cursor.style.opacity = "1";
+  } else {
+    document.body.style.cursor = "default";
+    cursor.style.opacity = "0";
+  }
+});
+
+/* Cursor + exhaust only in NOW mode */
+document.addEventListener("mousemove", e => {
+  if (!toggle.checked) return;
+
+  cursor.style.left = e.clientX + "px";
+  cursor.style.top = e.clientY + "px";
+
+  const t = document.createElement("div");
+  t.className = "trail";
+  t.style.left = e.clientX + "px";
+  t.style.top = e.clientY + "px";
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 1000);
+});
+</script>
+
+
+</body>
+</html>
