@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Cricket Score – Broadcast Edition</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Poppins,sans-serif}
+
+body{
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:
+    radial-gradient(circle at 20% 10%, #00f2fe55, transparent 40%),
+    radial-gradient(circle at 80% 90%, #a855f755, transparent 45%),
+    linear-gradient(135deg,#020617,#020617);
+  color:#fff;
+  overflow:hidden;
+}
+
+.frame{
+  width:360px;height:640px;
+  background:rgba(255,255,255,.08);
+  backdrop-filter:blur(25px);
+  border-radius:28px;
+  padding:18px;
+  box-shadow:0 0 60px #00f2fe33,inset 0 0 40px #ffffff12;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+}
+
+h1{text-align:center;font-size:22px}
+
+.scoreboard{
+  background:rgba(255,255,255,.12);
+  border-radius:22px;
+  padding:24px;
+  text-align:center;
+}
+
+.runs{
+  font-size:56px;
+  font-weight:600;
+  text-shadow:0 0 25px #00f2feaa;
+}
+
+.details{
+  display:flex;
+  justify-content:space-between;
+  margin-top:10px;
+}
+
+.balls-strip{
+  display:flex;
+  gap:6px;
+  justify-content:center;
+  margin-top:12px;
+}
+
+.ball{
+  width:26px;height:26px;
+  border-radius:50%;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:rgba(255,255,255,.15);
+  box-shadow:0 0 10px #00f2fe55;
+  font-size:12px;
+}
+
+/* ===== BUTTONS ===== */
+.buttons{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+}
+
+button{
+  padding:12px 0;
+  border:none;
+  border-radius:24px;
+  cursor:pointer;
+  color:#fff;
+  background:linear-gradient(135deg,#00f2fe,#4facfe);
+  box-shadow:0 8px 20px #00f2fe55;
+}
+
+.control{background:linear-gradient(135deg,#6366f1,#8b5cf6)}
+.danger{background:linear-gradient(135deg,#ff512f,#dd2476)}
+.reset{background:linear-gradient(135deg,#facc15,#f97316)}
+
+/* ===== BOUNDARY OVERLAY ===== */
+.boundary-overlay,
+.wicket-overlay{
+  position:fixed;
+  inset:0;
+  background:#000;
+  display:none;
+  justify-content:center;
+  align-items:center;
+  z-index:99;
+}
+
+.boundary-num{
+  font-size:160px;
+  font-weight:700;
+  color:#fff;
+  text-shadow:0 0 60px #00f2fe,0 0 120px #00f2fe;
+  animation:zoom 1s infinite alternate;
+}
+
+/* ===== WICKET ANIMATION ===== */
+.wicket-letter{
+  font-size:160px;
+  font-weight:800;
+  color:#fff;
+  text-shadow:
+    0 0 40px #ff0000,
+    0 0 80px #ff1a1a,
+    0 0 140px #ff4d4d;
+  animation:wPulse 1s infinite alternate;
+}
+
+@keyframes zoom{
+  from{transform:scale(1)}
+  to{transform:scale(1.25)}
+}
+
+@keyframes wPulse{
+  from{transform:scale(1)}
+  to{transform:scale(1.2)}
+}
+
+/* ===== SUMMARY ===== */
+.summary{
+  position:absolute;
+  inset:0;
+  background:#000;
+  border-radius:28px;
+  display:none;
+  flex-direction:column;
+  padding:18px;
+  box-shadow:inset 0 0 30px #ffffff12;
+}
+
+.summary h2{text-align:center;margin-bottom:12px}
+
+.summary-list{
+  flex:1;
+  overflow:auto;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.over-card{
+  background:rgba(255,255,255,.12);
+  border-radius:18px;
+  padding:10px;
+}
+
+.over-title{
+  font-size:14px;
+  opacity:.8;
+  margin-bottom:6px;
+}
+
+.over-balls{
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+}
+
+.back{margin-top:10px}
+</style>
+</head>
+
+<body>
+
+<div class="frame">
+
+<h1>🏏 Cricket Score</h1>
+
+<div class="scoreboard">
+  <div class="runs" id="runs">0</div>
+  <div class="details">
+    <span>Wkts: <b id="wickets">0</b></span>
+    <span>Overs: <b id="overs">0.0</b></span>
+  </div>
+  <div class="balls-strip" id="ballsStrip"></div>
+</div>
+
+<div class="buttons">
+  <button class="control" onclick="dot()">Dot</button>
+  <button onclick="play(1)">1</button>
+  <button onclick="play(2)">2</button>
+  <button onclick="play(3)">3</button>
+  <button onclick="play(4)">4</button>
+  <button onclick="play(6)">6</button>
+</div>
+
+<div class="buttons">
+  <button class="control" onclick="wide()">Wide</button>
+  <button class="control" onclick="noBall()">No Ball</button>
+  <button class="danger" onclick="wicket()">Wicket</button>
+  <button onclick="undo()">Undo</button>
+  <button onclick="openSummary()">Summary</button>
+  <button class="reset" onclick="reset()">Reset</button>
+</div>
+
+<div class="summary" id="summary">
+  <h2>Match Summary</h2>
+  <div class="summary-list" id="summaryList"></div>
+  <button class="back" onclick="closeSummary()">⬅ Back</button>
+</div>
+
+</div>
+
+<div class="boundary-overlay" id="boundary">
+  <div class="boundary-num" id="boundaryNum"></div>
+</div>
+
+<div class="wicket-overlay" id="wicketFx">
+  <div class="wicket-letter">W</div>
+</div>
+
+<script>
+let runs = 0, wkts = 0, balls = 0;
+let history = [], overs = [], currentOver = [];
+
+/* ✅ CORRECT DOM REFERENCES */
+const runsEl = document.getElementById("runs");
+const wicketsEl = document.getElementById("wickets");
+const oversEl = document.getElementById("overs");
+const ballsStrip = document.getElementById("ballsStrip");
+const summary = document.getElementById("summary");
+const summaryList = document.getElementById("summaryList");
+const boundary = document.getElementById("boundary");
+const boundaryNum = document.getElementById("boundaryNum");
+const wicketFx = document.getElementById("wicketFx");
+
+/* ===== STATE ===== */
+function save(){
+  history.push(JSON.stringify({ runs, wkts, balls, overs, currentOver }));
+}
+
+function restore(){
+  if(!history.length) return;
+  ({ runs, wkts, balls, overs, currentOver } = JSON.parse(history.pop()));
+  update();
+}
+
+/* ===== BALL LOGIC ===== */
+function legal(val){
+  balls++;
+  currentOver.push(val);
+
+  if(currentOver.length === 6){
+    overs.push([...currentOver]);
+    currentOver = [];
+  }
+}
+
+/* ===== ACTIONS ===== */
+function play(v){
+  save();
+  runs += v;
+  legal(v);
+  if(v === 4 || v === 6) celebrate(v);
+  update();
+}
+
+function dot(){
+  save();
+  legal("•");
+  update();
+}
+
+function wide(){
+  save();
+  runs++;
+  currentOver.push("Wd");
+  update();
+}
+
+function noBall(){
+  save();
+  runs++;
+  currentOver.push("Nb");
+  update();
+}
+
+function wicket(){
+  save();
+  wkts++;
+  legal("W");
+  showWicket();
+  update();
+}
+
+function undo(){ restore(); }
+
+/* ===== UI UPDATE ===== */
+function update(){
+  runsEl.textContent = runs;
+  wicketsEl.textContent = wkts;
+  oversEl.textContent = Math.floor(balls / 6) + "." + (balls % 6);
+
+  ballsStrip.innerHTML = currentOver
+    .map(b => `<div class="ball">${b}</div>`)
+    .join("");
+}
+
+/* ===== FX ===== */
+function celebrate(n){
+  boundaryNum.textContent = n;
+  boundary.style.display = "flex";
+  setTimeout(() => boundary.style.display = "none", 2500);
+}
+
+function showWicket(){
+  wicketFx.style.display = "flex";
+  setTimeout(() => wicketFx.style.display = "none", 2200);
+}
+
+/* ===== SUMMARY ===== */
+function openSummary(){
+  summary.style.display = "flex";
+
+  let allOvers = [...overs];
+  if(currentOver.length) allOvers.push(currentOver);
+
+  summaryList.innerHTML = allOvers.map((o,i)=>`
+    <div class="over-card">
+      <div class="over-title">Over ${i + 1}</div>
+      <div class="over-balls">
+        ${o.map(b => `<div class="ball">${b}</div>`).join("")}
+      </div>
+    </div>
+  `).join("");
+}
+
+function closeSummary(){
+  summary.style.display = "none";
+}
+
+/* ===== RESET ===== */
+function reset(){
+  runs = wkts = balls = 0;
+  history = [];
+  overs = [];
+  currentOver = [];
+  update();
+}
+</script>
+
+
+</body>
+</html>
