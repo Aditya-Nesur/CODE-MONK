@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Monthly Expense Tracker</title>
+
+<style>
+:root{
+  --accent:#22d3ee;
+  --needs:#fde047;
+  --wants:#fb7185;
+  --invest:#34d399;
+  --muted:#94a3b8;
+  font-family:Poppins,Segoe UI,sans-serif;
+}
+*{box-sizing:border-box}
+
+/* ===== BACKGROUND ===== */
+body{
+  margin:0;
+  min-height:100vh;
+  background:#020617;
+  color:#e5e7eb;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  overflow:hidden;
+  padding:12px;
+}
+body::before,
+body::after{
+  content:"";
+  position:fixed;
+  inset:-30%;
+  background:
+    radial-gradient(400px 300px at 20% 20%, rgba(34,211,238,.35), transparent 50%),
+    radial-gradient(400px 400px at 80% 30%, rgba(59,130,246,.25), transparent 50%),
+    radial-gradient(400px 400px at 50% 80%, rgba(52,211,153,.25), transparent 50%);
+  animation:float 22s linear infinite alternate;
+  z-index:-1;
+}
+body::after{animation-duration:30s;opacity:.6}
+@keyframes float{
+  from{transform:translate(-4%,-4%)}
+  to{transform:translate(4%,4%)}
+}
+
+/* ===== APP ===== */
+.container{
+  width:100%;
+  max-width:420px;
+  backdrop-filter:blur(26px) saturate(160%);
+  background:rgba(255,255,255,.035);
+  border:1px solid rgba(255,255,255,.15);
+  border-radius:22px;
+  padding:14px;
+  box-shadow:0 30px 90px rgba(0,0,0,.7);
+}
+
+/* ===== HEADER ===== */
+header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:12px;
+}
+header h1{font-size:18px;margin:0}
+.small{font-size:12px;color:var(--muted)}
+
+/* ===== CARD ===== */
+.card{
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.14);
+  border-radius:18px;
+  padding:12px;
+  margin-bottom:12px;
+}
+
+/* ===== FORM ===== */
+.form-row{
+  display:grid;
+  gap:10px;
+}
+input,select{
+  width:100%;
+  padding:11px;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,.2);
+  background:rgba(255,255,255,.06);
+  color:#fff;
+}
+input:focus,select:focus{
+  border-color:var(--accent);
+  box-shadow:0 0 18px rgba(34,211,238,.5);
+}
+select option{background:#020617}
+
+/* ===== BUTTONS ===== */
+.btn{
+  width:100%;
+  padding:12px;
+  border-radius:16px;
+  font-weight:600;
+  background:linear-gradient(90deg,var(--accent),#3b82f6);
+  color:#04161d;
+  border:none;
+  box-shadow:0 0 25px rgba(34,211,238,.7);
+}
+.btn-ghost{
+  background:rgba(255,255,255,.08);
+  color:#fff;
+  border:1px solid rgba(255,255,255,.2);
+}
+.danger{
+  background:rgba(239,68,68,.25);
+  color:#f87171;
+  border:1px solid rgba(239,68,68,.4);
+  border-radius:10px;
+  padding:4px 8px;
+}
+
+/* ===== SUMMARY ===== */
+.total-row{
+  display:flex;
+  justify-content:space-between;
+  padding:8px;
+  border-radius:12px;
+  margin-top:6px;
+  background:rgba(255,255,255,.07);
+  font-weight:600;
+}
+.grand{
+  background:linear-gradient(90deg,#22d3ee,#3b82f6);
+  color:#04161d;
+}
+
+/* ===== BARS ===== */
+.percent-item{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin-top:8px;
+  font-size:12px;
+}
+.percent-bar{
+  flex:1;
+  height:10px;
+  background:rgba(255,255,255,.2);
+  border-radius:999px;
+  overflow:hidden;
+}
+.percent-inner{
+  height:100%;
+  border-radius:999px;
+  box-shadow:0 0 12px currentColor;
+}
+
+/* ===== HISTORY MODAL ===== */
+.modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.75);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  z-index:10;
+}
+.modal.active{display:flex}
+.modal-box{
+  width:90%;
+  max-width:420px;
+  max-height:80vh;
+  backdrop-filter:blur(26px);
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.2);
+  border-radius:22px;
+  padding:14px;
+  box-shadow:0 0 40px rgba(34,211,238,.3);
+  display:flex;
+  flex-direction:column;
+}
+.modal-header{
+  display:flex;
+  justify-content:space-between;
+  margin-bottom:8px;
+}
+.modal-body{
+  overflow:auto;
+  font-size:13px;
+}
+.modal-body::-webkit-scrollbar{width:0}
+
+/* ===== HISTORY LIST ===== */
+.history-item{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:8px;
+  margin-bottom:6px;
+  border-radius:12px;
+  background:rgba(255,255,255,.07);
+}
+.type-pill{
+  padding:4px 8px;
+  border-radius:999px;
+  font-size:11px;
+  font-weight:700;
+  color:#020617;
+}
+.needs{background:var(--needs)}
+.wants{background:var(--wants)}
+.investments{background:var(--invest)}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<header>
+  <h1>Expense Tracker</h1>
+  <button class="btn btn-ghost" onclick="openHistory()">History</button>
+</header>
+
+<div class="card">
+  <div class="form-row">
+    <input id="amount" type="number" placeholder="Amount ₹">
+    <input id="description" placeholder="Description">
+    <input id="dateInput" type="date">
+    <select id="type">
+      <option value="">Category</option>
+      <option value="needs">Needs</option>
+      <option value="wants">Wants</option>
+      <option value="investments">Invest</option>
+    </select>
+    <button class="btn" id="addBtn">Add Expense</button>
+  </div>
+</div>
+
+<div class="card">
+  <h3>Summary</h3>
+  <div class="total-row"><span>Needs</span><span id="needsTotal">₹0</span></div>
+  <div class="total-row"><span>Wants</span><span id="wantsTotal">₹0</span></div>
+  <div class="total-row"><span>Invest</span><span id="invTotal">₹0</span></div>
+  <div class="total-row grand"><span>Total</span><span id="grandTotal">₹0</span></div>
+
+  <div class="percent-item">
+    <span>Needs</span>
+    <div class="percent-bar"><div id="barNeeds" class="percent-inner" style="background:var(--needs)"></div></div>
+    <span id="pctNeeds">0%</span>
+  </div>
+  <div class="percent-item">
+    <span>Wants</span>
+    <div class="percent-bar"><div id="barWants" class="percent-inner" style="background:var(--wants)"></div></div>
+    <span id="pctWants">0%</span>
+  </div>
+  <div class="percent-item">
+    <span>Invest</span>
+    <div class="percent-bar"><div id="barInv" class="percent-inner" style="background:var(--invest)"></div></div>
+    <span id="pctInv">0%</span>
+  </div>
+</div>
+
+</div>
+
+<!-- ===== HISTORY MODAL ===== -->
+<div class="modal" id="historyModal" onclick="closeHistory(event)">
+  <div class="modal-box">
+    <div class="modal-header">
+      <strong>Expense History</strong>
+      <button class="danger" onclick="closeHistory()">✕</button>
+    </div>
+    <div class="modal-body" id="historyList"></div>
+  </div>
+</div>
+
+<script>
+const data=JSON.parse(localStorage.getItem("expenses")||"[]");
+
+function render(){
+  const t={needs:0,wants:0,investments:0};
+  data.forEach(e=>t[e.type]+=e.amount);
+  const g=t.needs+t.wants+t.investments;
+
+  needsTotal.textContent="₹"+t.needs;
+  wantsTotal.textContent="₹"+t.wants;
+  invTotal.textContent="₹"+t.investments;
+  grandTotal.textContent="₹"+g;
+
+  pctNeeds.textContent=g?Math.round(t.needs/g*100)+"%":"0%";
+  pctWants.textContent=g?Math.round(t.wants/g*100)+"%":"0%";
+  pctInv.textContent=g?Math.round(t.investments/g*100)+"%":"0%";
+
+  barNeeds.style.width=pctNeeds.textContent;
+  barWants.style.width=pctWants.textContent;
+  barInv.style.width=pctInv.textContent;
+}
+addBtn.onclick=()=>{
+  if(!amount.value||!description.value||!type.value) return;
+  data.push({
+    id:Date.now(),
+    amount:+amount.value,
+    desc:description.value,
+    type:type.value,
+    date:dateInput.value||new Date().toISOString().slice(0,10)
+  });
+  localStorage.setItem("expenses",JSON.stringify(data));
+  amount.value=description.value=dateInput.value=type.value="";
+  render();
+};
+function openHistory(){
+  historyList.innerHTML=data.length?data.map(e=>`
+    <div class="history-item">
+      <div>
+        <div>${e.desc} • ₹${e.amount}</div>
+        <small>${e.date}</small>
+      </div>
+      <span class="type-pill ${e.type}">${e.type}</span>
+    </div>
+  `).join(""):"<p style='color:var(--muted)'>No expenses</p>";
+  historyModal.classList.add("active");
+}
+function closeHistory(e){
+  if(!e||e.target.id==="historyModal")
+    historyModal.classList.remove("active");
+}
+render();
+</script>
+
+</body>
+</html>
