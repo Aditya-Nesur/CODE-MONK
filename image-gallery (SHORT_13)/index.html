@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Glassmorphic Gallery</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:'Poppins',sans-serif;
+  cursor:none;
+}
+
+body{
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:
+    radial-gradient(circle at 20% 20%, #00f2fe55, transparent 40%),
+    radial-gradient(circle at 80% 80%, #a855f755, transparent 45%),
+    linear-gradient(135deg,#020617,#020617);
+  overflow:hidden;
+}
+
+/* ===== FRAME ===== */
+.frame{
+  width:360px;
+  height:640px;
+  border-radius:28px;
+  background:rgba(255,255,255,0.06);
+  backdrop-filter:blur(22px);
+  box-shadow:0 0 40px rgba(0,242,254,.25);
+  overflow:hidden;
+  color:#fff;
+}
+
+/* ===== NAVBAR ===== */
+.navbar{
+  display:flex;
+  justify-content:space-around;
+  padding:14px;
+  background:rgba(255,255,255,0.08);
+  backdrop-filter:blur(18px);
+}
+
+.navbar button{
+  background:none;
+  border:none;
+  color:#e5e7eb;
+  font-size:13px;
+  padding:6px 14px;
+  transition:.3s ease;
+}
+
+.navbar button.active,
+.navbar button:hover{
+  color:#fff;
+  text-shadow:0 0 10px #00f2fe;
+}
+
+/* ===== CONTENT ===== */
+.content{
+  padding:14px;
+  height:100%;
+  overflow-y:auto;
+}
+.content::-webkit-scrollbar{display:none}
+
+/* ===== GALLERY ===== */
+.gallery{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:12px;
+}
+
+.gallery img{
+  width:100%;
+  height:150px;
+  object-fit:cover;
+  border-radius:18px;
+  transition:.35s ease;
+  box-shadow:0 8px 25px rgba(0,0,0,.35);
+}
+
+.gallery img:hover{
+  transform:scale(1.08);
+  box-shadow:0 0 25px rgba(0,242,254,.6);
+}
+
+/* ===== PREVIEW ===== */
+.preview{
+  position:fixed;
+  inset:0;
+  background:rgba(2,6,23,.85);
+  backdrop-filter:blur(12px);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  z-index:10;
+}
+
+.preview img{
+  width:82%;
+  border-radius:26px;
+  box-shadow:0 0 40px rgba(0,242,254,.6);
+}
+
+/* ===== CURSOR ===== */
+.cursor{
+  position:fixed;
+  width:14px;
+  height:14px;
+  border-radius:50%;
+  background:radial-gradient(circle,#00f2fe,#8b5cf6);
+  pointer-events:none;
+  z-index:999;
+  mix-blend-mode:screen;
+  box-shadow:0 0 15px #00f2fe;
+}
+
+/* ===== CURSOR TRAIL ===== */
+.trail{
+  position:fixed;
+  width:22px;
+  height:22px;
+  border-radius:50%;
+  pointer-events:none;
+  z-index:998;
+  animation:trailFade .7s linear forwards;
+}
+
+@keyframes trailFade{
+  from{opacity:1;transform:scale(.6)}
+  to{opacity:0;transform:scale(2.5)}
+}
+</style>
+</head>
+
+<body>
+
+<div class="frame">
+
+  <div class="navbar">
+    <button class="active" onclick="filterImages('all',this)">All</button>
+    <button onclick="filterImages('nature',this)">Nature</button>
+    <button onclick="filterImages('city',this)">City</button>
+    <button onclick="filterImages('wildlife',this)">Wildlife</button>
+  </div>
+
+  <div class="content">
+    <div class="gallery" id="gallery"></div>
+  </div>
+
+</div>
+
+<div class="preview" onclick="closeImg()">
+  <img id="fullImg">
+</div>
+
+<div class="cursor" id="cursor"></div>
+
+<script>
+const gallery = document.getElementById('gallery');
+const cursor = document.getElementById('cursor');
+
+/* IMAGE COUNT */
+const imageConfig = {
+  nature: 5,
+  city: 5,
+  wildlife: 5
+};
+
+/* MULTI COLOR SET */
+const colors = [
+  'radial-gradient(circle,#00f2fe,transparent 70%)',
+  'radial-gradient(circle,#8b5cf6,transparent 70%)',
+  'radial-gradient(circle,#ec4899,transparent 70%)',
+  'radial-gradient(circle,#38bdf8,transparent 70%)'
+];
+
+/* LOAD IMAGES */
+function loadImages(category = 'all'){
+  gallery.innerHTML = '';
+  for(const cat in imageConfig){
+    if(category !== 'all' && category !== cat) continue;
+    for(let i=1;i<=imageConfig[cat];i++){
+      const img=document.createElement('img');
+      img.src=`images/${cat}/${cat}(${i}).png`;
+      img.onclick=()=>openImg(img);
+      gallery.appendChild(img);
+    }
+  }
+}
+
+function openImg(img){
+  fullImg.src=img.src;
+  document.querySelector('.preview').style.display='flex';
+}
+
+function closeImg(){
+  document.querySelector('.preview').style.display='none';
+}
+
+function filterImages(cat,btn){
+  document.querySelectorAll('.navbar button')
+    .forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  loadImages(cat);
+}
+
+/* CURSOR + TRAIL */
+document.addEventListener('mousemove',e=>{
+  cursor.style.left=e.clientX-7+'px';
+  cursor.style.top=e.clientY-7+'px';
+
+  const trail=document.createElement('div');
+  trail.className='trail';
+  trail.style.left=e.clientX-11+'px';
+  trail.style.top=e.clientY-11+'px';
+  trail.style.background=colors[Math.floor(Math.random()*colors.length)];
+  document.body.appendChild(trail);
+
+  setTimeout(()=>trail.remove(),700);
+});
+
+/* INIT */
+loadImages();
+</script>
+
+</body>
+</html>
