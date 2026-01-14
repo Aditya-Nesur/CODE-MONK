@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Ultra Premium Glass Tic Tac Toe</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&display=swap');
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:'Poppins',sans-serif;
+}
+
+body{
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:
+    radial-gradient(circle at top,#0f172a,#020617),
+    linear-gradient(135deg,#020617,#0b1220);
+  color:#fff;
+}
+
+/* ================= FRAME ================= */
+.frame{
+  width:360px;
+  height:640px;
+  padding:28px;
+  border-radius:34px;
+  background:
+    linear-gradient(180deg,
+      rgba(255,255,255,.12),
+      rgba(255,255,255,.02)
+    );
+  backdrop-filter:blur(30px);
+  border:1px solid rgba(255,255,255,.18);
+  position:relative;
+  overflow:hidden;
+  box-shadow:
+    0 60px 140px rgba(0,0,0,.9),
+    inset 0 1px 1px rgba(255,255,255,.35);
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+}
+
+/* ===== AMBIENT LIGHT ===== */
+.frame::before,
+.frame::after{
+  content:"";
+  position:absolute;
+  width:260px;
+  height:260px;
+  border-radius:50%;
+  filter:blur(180px);
+  opacity:.18;
+  animation:float 26s ease-in-out infinite;
+}
+
+.frame::before{
+  background:#00ffcc;
+  top:-160px;
+  left:-160px;
+}
+
+.frame::after{
+  background:#ff003c;
+  bottom:-160px;
+  right:-160px;
+  animation-delay:13s;
+}
+
+@keyframes float{
+  50%{transform:translate(60px,90px);}
+}
+
+.frame>*{position:relative;z-index:2}
+
+/* ================= HEADER ================= */
+h1{
+  text-align:center;
+  font-size:22px;
+  letter-spacing:1.6px;
+  opacity:.95;
+}
+
+/* ================= MODE ================= */
+.mode{
+  display:flex;
+  justify-content:center;
+  gap:16px;
+}
+
+.mode button{
+  padding:10px 22px;
+  border-radius:24px;
+  border:1px solid rgba(255,255,255,.25);
+  background:rgba(255,255,255,.08);
+  color:#fff;
+  cursor:pointer;
+  transition:.35s;
+  backdrop-filter:blur(10px);
+}
+
+.mode button.active{
+  background:linear-gradient(135deg,#00ffd5,#00bfa5);
+  color:#000;
+  box-shadow:0 0 22px rgba(0,255,213,.55);
+}
+
+/* ================= BOARD ================= */
+.board{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:18px;
+  margin:auto;
+}
+
+/* ================= CELL ================= */
+.cell{
+  width:94px;
+  height:94px;
+  border-radius:26px;
+  background:
+    linear-gradient(180deg,
+      rgba(255,255,255,.22),
+      rgba(255,255,255,.06)
+    );
+  backdrop-filter:blur(20px);
+  border:1px solid rgba(255,255,255,.25);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  font-size:58px;
+  font-weight:700;
+  cursor:pointer;
+  transition:.45s cubic-bezier(.25,.8,.25,1);
+  box-shadow:
+    inset 0 2px 2px rgba(255,255,255,.35),
+    inset 0 -10px 18px rgba(0,0,0,.45);
+}
+
+.cell:hover{
+  transform:translateY(-4px) scale(1.08);
+  box-shadow:
+    0 25px 55px rgba(0,0,0,.8),
+    inset 0 2px 2px rgba(255,255,255,.35);
+}
+
+/* ================= GLASS SYMBOLS ================= */
+.cell.x,.cell.o{
+  color:transparent;
+  -webkit-text-fill-color:transparent;
+}
+
+/* 🔴 X */
+.cell.x{
+  -webkit-text-stroke:2.2px rgba(255,40,90,.65);
+  filter:
+    drop-shadow(0 0 6px rgba(255,40,90,.4))
+    drop-shadow(0 0 16px rgba(255,40,90,.25));
+}
+
+/* 🟢 O */
+.cell.o{
+  -webkit-text-stroke:2.2px rgba(0,255,180,.65);
+  filter:
+    drop-shadow(0 0 6px rgba(0,255,180,.4))
+    drop-shadow(0 0 16px rgba(0,255,180,.25));
+}
+
+/* ================= STATUS ================= */
+.status{
+  text-align:center;
+  font-size:14px;
+  opacity:.8;
+  letter-spacing:.6px;
+}
+
+/* ================= RESET ================= */
+.reset{
+  padding:14px;
+  border-radius:36px;
+  border:none;
+  cursor:pointer;
+  font-weight:600;
+  background:
+    linear-gradient(135deg,#ffe259,#ffa751);
+  box-shadow:
+    0 18px 40px rgba(255,180,0,.55);
+  transition:.35s;
+}
+
+.reset:hover{
+  transform:translateY(-3px) scale(1.06);
+}
+</style>
+</head>
+
+<body>
+
+<div class="frame" id="frame">
+  <h1>ULTRA GLASS TIC TAC TOE</h1>
+
+  <div class="mode">
+    <button class="active" onclick="setMode('pvp',this)">PVP</button>
+    <button onclick="setMode('ai',this)">VS AI</button>
+  </div>
+
+  <div class="board" id="board"></div>
+
+  <div class="status" id="status">Player X's turn</div>
+  <button class="reset" onclick="resetGame()">Reset Game</button>
+</div>
+
+<script>
+let board=Array(9).fill("");
+let current="X";
+let mode="pvp";
+let gameOver=false;
+
+const winCombos=[
+ [0,1,2],[3,4,5],[6,7,8],
+ [0,3,6],[1,4,7],[2,5,8],
+ [0,4,8],[2,4,6]
+];
+
+const boardEl=document.getElementById("board");
+const statusEl=document.getElementById("status");
+const frame=document.getElementById("frame");
+
+function drawBoard(){
+  boardEl.innerHTML="";
+  board.forEach((v,i)=>{
+    const c=document.createElement("div");
+    c.className="cell";
+    if(v==="X")c.classList.add("x");
+    if(v==="O")c.classList.add("o");
+    c.textContent=v;
+    c.onclick=()=>makeMove(i);
+    boardEl.appendChild(c);
+  });
+}
+
+function makeMove(i){
+  if(board[i]||gameOver)return;
+
+  board[i]=current;
+  drawBoard();
+
+  if(checkWinner(board)){
+    gameOver=true;
+    statusEl.textContent=`${current} Wins!`;
+    frame.style.boxShadow=`0 0 120px ${current==="X"?"rgba(255,40,90,.5)":"rgba(0,255,180,.5)"}`;
+    return;
+  }
+
+  if(!board.includes("")){
+    gameOver=true;
+    statusEl.textContent="Draw!";
+    return;
+  }
+
+  current=current==="X"?"O":"X";
+  statusEl.textContent=`Player ${current}'s turn`;
+
+  if(mode==="ai" && current==="O"){
+    setTimeout(()=>makeMove(bestMove()),450);
+  }
+}
+
+/* ===== UNBEATABLE AI ===== */
+function bestMove(){
+  let best=-Infinity,move;
+  board.forEach((v,i)=>{
+    if(v===""){
+      board[i]="O";
+      let score=minimax(board,0,false);
+      board[i]="";
+      if(score>best){best=score;move=i;}
+    }
+  });
+  return move;
+}
+
+function minimax(b,d,isMax){
+  let res=checkWinner(b);
+  if(res==="O")return 10-d;
+  if(res==="X")return d-10;
+  if(!b.includes(""))return 0;
+
+  if(isMax){
+    let max=-Infinity;
+    b.forEach((v,i)=>{
+      if(v===""){
+        b[i]="O";
+        max=Math.max(max,minimax(b,d+1,false));
+        b[i]="";
+      }
+    });
+    return max;
+  }else{
+    let min=Infinity;
+    b.forEach((v,i)=>{
+      if(v===""){
+        b[i]="X";
+        min=Math.min(min,minimax(b,d+1,true));
+        b[i]="";
+      }
+    });
+    return min;
+  }
+}
+
+function checkWinner(b){
+  for(const [a,c,d] of winCombos){
+    if(b[a]&&b[a]===b[c]&&b[a]===b[d])return b[a];
+  }
+  return null;
+}
+
+function resetGame(){
+  board=Array(9).fill("");
+  current="X";
+  gameOver=false;
+  frame.style.boxShadow="";
+  statusEl.textContent="Player X's turn";
+  drawBoard();
+}
+
+function setMode(m,btn){
+  mode=m;
+  document.querySelectorAll(".mode button").forEach(b=>b.classList.remove("active"));
+  btn.classList.add("active");
+  resetGame();
+}
+
+drawBoard();
+</script>
+
+</body>
+</html>
