@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Cursor Aura – Theme Toggle</title>
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
+body{
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:#050505;
+  cursor:none;
+  font-family:sans-serif;
+}
+
+/* 9:16 Frame */
+.frame{
+  width:360px;
+  height:640px;
+  border-radius:22px;
+  overflow:hidden;
+  position:relative;
+  background:radial-gradient(circle,#0f2027,#050505);
+  transition:0.5s;
+}
+
+/* Glass Toggle */
+.toggle{
+  position:absolute;
+  top:18px;
+  right:18px;
+  padding:10px 16px;
+  border-radius:14px;
+  background:rgba(255,255,255,0.12);
+  backdrop-filter:blur(12px);
+  border:1px solid rgba(255,255,255,0.25);
+  color:#fff;
+  font-size:12px;
+  cursor:pointer;
+  z-index:20;
+}
+
+/* Cursor */
+.cursor{
+  position:absolute;
+  width:18px;
+  height:18px;
+  border-radius:50%;
+  pointer-events:none;
+  transform:translate(-50%,-50%);
+  z-index:10;
+  will-change: transform;
+}
+
+
+/* Particle */
+.particle{
+  position:absolute;
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  pointer-events:none;
+  filter:blur(1px);
+}
+
+/* THEMES */
+.cyber{
+  background:radial-gradient(circle,#120045,#020014);
+}
+.fire{
+  background:radial-gradient(circle,#2b0000,#000);
+}
+.ice{
+  background:radial-gradient(circle,#e0f7ff,#001a2d);
+}
+.matrix{
+  background:#000;
+}
+.galaxy{
+  background:radial-gradient(circle at top,#3a1c71,#000);
+}
+.neon{
+  background:radial-gradient(circle,#ff00cc,#330033);
+}
+.gold{
+  background:radial-gradient(circle,#3a2c00,#000);
+}
+.toxic{
+  background:radial-gradient(circle,#1aff00,#002200);
+}
+.void{
+  background:#000;
+}
+.aurora{
+  background:linear-gradient(135deg,#00f2fe,#4facfe,#00ff88);
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="frame cyber" id="frame">
+  <div class="toggle" id="toggle">CYBER</div>
+  <div class="cursor" id="cursor"></div>
+</div>
+
+<script>
+  let mouseX = 180, mouseY = 320;
+let curX = 180, curY = 320;
+
+const frame = document.getElementById("frame");
+const cursor = document.getElementById("cursor");
+const toggle = document.getElementById("toggle");
+
+const themes = [
+  { name:"CYBER", class:"cyber", color:"#00f2fe", glow:"#4facfe" },
+  { name:"FIRE", class:"fire", color:"#ff6a00", glow:"#ff0000" },
+  { name:"ICE", class:"ice", color:"#ffffff", glow:"#8fd3f4" },
+  { name:"MATRIX", class:"matrix", color:"#00ff88", glow:"#00ff88" },
+
+  { name:"GALAXY", class:"galaxy", color:"#9d4edd", glow:"#5a189a" },
+  { name:"NEON", class:"neon", color:"#ff00cc", glow:"#ff66ff" },
+  { name:"GOLD", class:"gold", color:"#ffd700", glow:"#ffae00" },
+  { name:"TOXIC", class:"toxic", color:"#1aff00", glow:"#b6ff00" },
+  { name:"VOID", class:"void", color:"#ffffff", glow:"#888" },
+  { name:"AURORA", class:"aurora", color:"#00ffe7", glow:"#00ff88" }
+];
+
+
+let index = 0;
+
+function applyTheme(){
+  frame.className = "frame " + themes[index].class;
+  toggle.textContent = themes[index].name;
+
+  cursor.style.background =
+    `radial-gradient(circle,#fff,${themes[index].color})`;
+  cursor.style.boxShadow =
+    `0 0 20px ${themes[index].color},0 0 40px ${themes[index].glow}`;
+}
+
+toggle.onclick = ()=>{
+  index = (index + 1) % themes.length;
+  applyTheme();
+};
+
+applyTheme();
+
+frame.addEventListener("mousemove", e=>{
+  const rect = frame.getBoundingClientRect();
+  mouseX = e.clientX - rect.left;
+  mouseY = e.clientY - rect.top;
+
+  createParticle(mouseX, mouseY);
+});
+
+function smoothCursor(){
+  curX += (mouseX - curX) * 0.35;
+  curY += (mouseY - curY) * 0.35;
+
+  cursor.style.left = curX + "px";
+  cursor.style.top = curY + "px";
+
+  requestAnimationFrame(smoothCursor);
+}
+smoothCursor();
+
+
+function createParticle(x,y){
+  const p = document.createElement("div");
+  p.className = "particle";
+  frame.appendChild(p);
+
+  p.style.left = x + "px";
+  p.style.top = y + "px";
+  p.style.background = themes[index].color;
+
+  const angle = Math.random()*Math.PI*2;
+  const distance = Math.random()*35;
+  const dx = Math.cos(angle)*distance;
+  const dy = Math.sin(angle)*distance;
+
+  p.animate([
+    { transform:`translate(0,0) scale(1)`, opacity:1 },
+    { transform:`translate(${dx}px,${dy}px) scale(0)`, opacity:0 }
+  ],{
+    duration:600,
+    easing:"ease-out"
+  });
+
+  setTimeout(()=>p.remove(),600);
+}
+</script>
+
+</body>
+</html>
