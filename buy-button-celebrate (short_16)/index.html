@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Buy Celebration Cannon</title>
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:'Poppins',sans-serif;
+}
+
+body{
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:#000;
+}
+
+/* FRAME */
+.frame{
+  width:360px;
+  height:640px;
+  border-radius:26px;
+  background:
+    radial-gradient(circle at top,#16394a,#08161f 60%,#000);
+  position:relative;
+  overflow:hidden;
+}
+
+/* BUTTON */
+button{
+  position:absolute;
+  bottom:110px;
+  left:50%;
+  transform:translateX(-50%);
+  padding:18px 56px;
+  font-size:18px;
+  font-weight:600;
+  letter-spacing:1px;
+  color:#fff;
+  border-radius:50px;
+  border:none;
+  background:linear-gradient(135deg,var(--c1),var(--c2));
+  cursor:pointer;
+  z-index:10;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  transition:transform .25s ease;
+}
+
+button:hover{
+  transform:translateX(-50%) scale(1.05);
+}
+
+button span{
+  font-size:22px;
+}
+
+/* PARTICLE */
+.blast{
+  position:absolute;
+  bottom:-40px;
+  font-size:26px;
+  pointer-events:none;
+  will-change:transform, opacity;
+}
+</style>
+</head>
+
+<body>
+
+<div class="frame" id="frame">
+  <button id="buy">
+    <span id="icon">🎉</span>
+    BUY
+  </button>
+</div>
+
+<script>
+const frame = document.getElementById("frame");
+const buy = document.getElementById("buy");
+const icon = document.getElementById("icon");
+
+let index = 0;
+let running = false;
+
+/* SPEED CONTROLS 🔥 */
+const BLAST_FORCE = 500;     // ↑ higher = stronger upward cannon
+const GRAVITY_DROP = 150;   // ↓ how much it falls back
+const BASE_DURATION = 3000; // ↓ lower = faster overall
+
+/* THEMES */
+const themes = [
+  {emoji:"🎉", g1:"#fff3a0", g2:"#ffcc00"},
+  {emoji:"🔥", g1:"#ff9a3c", g2:"#ff3d00"},
+  {emoji:"🚀", g1:"#ff7a7a", g2:"#ff2d2d"},
+  {emoji:"✨", g1:"#ffffff", g2:"#cfcfcf"},
+  {emoji:"⭐", g1:"#6dd5ff", g2:"#2193b0"},
+  {emoji:"💎", g1:"#43e97b", g2:"#38f9d7"},
+  {emoji:"💥", g1:"#ff6a88", g2:"#ff2d55"},
+  {emoji:"🌈", g1:"#00ffd5", g2:"#00bfa5"},
+  {emoji:"🟣", g1:"#c084fc", g2:"#7c3aed"},
+  {emoji:"🟡", g1:"#fde047", g2:"#f59e0b"}
+];
+
+applyTheme(themes[0]);
+
+buy.onclick = () => {
+  if(running) return;
+  running = true;
+
+  const theme = themes[index];
+  applyTheme(theme);
+
+  const start = performance.now();
+  let last = 0;
+
+  function loop(now){
+    if(now - start < 1500){
+      if(now - last > 100){
+        blast(theme);
+        last = now;
+      }
+      requestAnimationFrame(loop);
+    }else{
+      running = false;
+      index = (index + 1) % themes.length;
+      applyTheme(themes[index]);
+    }
+  }
+
+  requestAnimationFrame(loop);
+};
+
+/* APPLY THEME */
+function applyTheme(t){
+  buy.style.setProperty("--c1", t.g1);
+  buy.style.setProperty("--c2", t.g2);
+  icon.textContent = t.emoji;
+}
+
+/* CANNON BLAST WITH DROP + FADE */
+function blast(t){
+  for(let i=0;i<4;i++){
+    const p = document.createElement("div");
+    p.className = "blast";
+    p.textContent = t.emoji;
+
+    const x = Math.random()*330;
+    const drift = Math.random()*200 - 100;
+    const rotate = Math.random()*180 - 90;
+    const scale = Math.random()*0.4 + 0.9;
+    const up = BLAST_FORCE + Math.random()*120;
+    const drop = GRAVITY_DROP + Math.random()*80;
+    const duration = BASE_DURATION + Math.random()*400;
+
+    p.style.left = x + "px";
+
+    frame.appendChild(p);
+
+    p.animate([
+      /* FAST UP */
+      {
+        transform:`translate(0,0) scale(${scale}) rotate(${rotate}deg)`,
+        opacity:1
+      },
+      {
+        transform:`translate(${drift}px,-${up}px) scale(${scale}) rotate(${rotate+90}deg)`,
+        opacity:1,
+        offset:0.6
+      },
+      /* DROP + FADE */
+      {
+        transform:`translate(${drift}px,-${up-drop}px) scale(${scale*0.9}) rotate(${rotate+160}deg)`,
+        opacity:0
+      }
+    ],{
+      duration,
+      easing:"cubic-bezier(.2,.9,.3,1)"
+    });
+
+    setTimeout(()=>p.remove(), duration);
+  }
+}
+</script>
+
+</body>
+</html>
