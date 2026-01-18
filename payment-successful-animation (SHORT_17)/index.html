@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>UPI Pay – Secure Transfer</title>
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Poppins,sans-serif;
+}
+
+body{
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:#000;
+}
+
+.frame{
+  width:360px;
+  height:640px;
+  border-radius:24px;
+  position:relative;
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  transition:.4s;
+}
+
+/* TOGGLE */
+.toggle{
+  position:absolute;
+  top:14px;
+  right:14px;
+  width:42px;
+  height:42px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:20px;
+  cursor:pointer;
+  border:2px solid #fff;
+  background:rgba(255,255,255,.15);
+  backdrop-filter:blur(6px);
+}
+
+/* PAY */
+.pay-screen{display:flex}
+
+.pay-btn{
+  padding:18px 70px;
+  font-size:18px;
+  font-weight:600;
+  border-radius:40px;
+  border:none;
+  cursor:pointer;
+}
+
+/* TRANSFER */
+.transfer{
+  display:none;
+  flex-direction:column;
+  align-items:center;
+  gap:40px;
+}
+
+/* BANK LOGOS */
+.banks{
+  width:260px;
+  display:flex;
+  justify-content:space-between;
+  position:relative;
+}
+
+.bank{
+  width:82px;
+  height:82px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+/* BRIGHT VIBRANT LOGO ONLY */
+.logo{
+  width:58px;
+  height:58px;
+  border-radius:16px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:28px;
+  font-weight:800;
+  color:#000;
+  background:linear-gradient(135deg,#ffffff,#ffffff);
+  box-shadow:
+    0 0 30px rgba(255,255,255,1),
+    inset 0 0 14px rgba(255,255,255,1);
+  animation:logoGlow 2s infinite;
+}
+
+/* PROJECTILE ZONE */
+.arc-zone{
+  position:absolute;
+  width:260px;
+  height:160px;
+  top:-20px;
+  left:0;
+  pointer-events:none;
+}
+
+/* MONEY */
+.money{
+  position:absolute;
+  width:22px;
+  height:22px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:13px;
+  font-weight:700;
+  color:#000;
+  background:radial-gradient(circle at top,#fff,#ffd700);
+  box-shadow:
+    0 0 14px rgba(255,215,0,.9),
+    inset 0 0 6px rgba(255,255,255,.9);
+}
+
+/* SUCCESS */
+.success{
+  display:none;
+  flex-direction:column;
+  align-items:center;
+}
+
+.circle{
+  width:140px;
+  height:140px;
+  border-radius:50%;
+  border:6px solid;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  animation:pulse 2s infinite;
+}
+
+.tick{
+  width:60px;
+  height:30px;
+  border-left:6px solid;
+  border-bottom:6px solid;
+  transform:rotate(-45deg);
+}
+
+h1{margin-top:28px}
+
+.amount{
+  margin-top:10px;
+  font-size:26px;
+  font-weight:600;
+}
+
+.sub{
+  font-size:13px;
+}
+
+/* CONFETTI */
+.confetti{
+  position:absolute;
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  top:50%;
+  left:50%;
+}
+
+/* ANIMATIONS */
+@keyframes pulse{
+  0%{box-shadow:0 0 20px}
+  50%{box-shadow:0 0 60px}
+  100%{box-shadow:0 0 20px}
+}
+
+@keyframes logoGlow{
+  0%,100%{transform:scale(1)}
+  50%{transform:scale(1.08)}
+}
+</style>
+</head>
+
+<body>
+
+<div class="frame" id="frame">
+
+  <div class="toggle" id="toggle">🎨</div>
+
+  <!-- PAY -->
+  <div class="pay-screen" id="payScreen">
+    <button class="pay-btn" id="payBtn">PAY ₹1,499</button>
+  </div>
+
+  <!-- TRANSFER -->
+  <div class="transfer" id="transferScreen">
+
+    <div class="banks">
+      <div class="bank">
+        <div class="logo">🏛️</div>
+      </div>
+
+      <div class="bank">
+        <div class="logo">🏛️</div>
+      </div>
+
+      <div class="arc-zone" id="arcZone"></div>
+    </div>
+
+    <!-- FIXED VISIBILITY -->
+    <div id="processingText" style="font-size:14px;color:#fff;opacity:.9">
+      Routing payment securely…
+    </div>
+  </div>
+
+  <!-- SUCCESS -->
+  <div class="success" id="successScreen">
+    <div class="circle" id="circle">
+      <div class="tick" id="tick"></div>
+    </div>
+    <h1 id="title">Payment Successful</h1>
+    <div class="amount" id="amountText">₹1,499</div>
+    <div class="sub" id="subText">Paid via UPI</div>
+  </div>
+
+</div>
+
+<script>
+const themes=[
+ {bg:"#0b0f0c",grad:"#0f3d2e",accent:"#2ecc71"},
+ {bg:"#0b1020",grad:"#162447",accent:"#1abcff"},
+ {bg:"#140b0b",grad:"#3d0f0f",accent:"#ff4757"},
+ {bg:"#120b1f",grad:"#2d145f",accent:"#9b59b6"},
+ {bg:"#0f120b",grad:"#3a3d0f",accent:"#f1c40f"}
+];
+
+const frame=document.getElementById("frame");
+const payBtn=document.getElementById("payBtn");
+const payScreen=document.getElementById("payScreen");
+const transfer=document.getElementById("transferScreen");
+const success=document.getElementById("successScreen");
+const toggle=document.getElementById("toggle");
+const arcZone=document.getElementById("arcZone");
+const circle=document.getElementById("circle");
+const tick=document.getElementById("tick");
+const title=document.getElementById("title");
+const amountText=document.getElementById("amountText");
+const subText=document.getElementById("subText");
+const logos=document.querySelectorAll(".logo");
+
+let i=0, projectileInterval;
+
+function applyTheme(){
+ const t=themes[i];
+ frame.style.background=`linear-gradient(180deg,${t.grad},${t.bg})`;
+ payBtn.style.background=t.accent;
+ payBtn.style.color="#000";
+
+ circle.style.borderColor=t.accent;
+ circle.style.boxShadow=`0 0 40px ${t.accent}`;
+ tick.style.borderColor=t.accent;
+
+ title.style.color=t.accent;
+ amountText.style.color=t.accent;
+ subText.style.color=t.accent;
+
+ logos.forEach(l=>{
+   l.style.background=`linear-gradient(135deg,#fff,${t.accent})`;
+   l.style.boxShadow=`0 0 32px ${t.accent}, inset 0 0 12px #fff`;
+ });
+}
+
+toggle.onclick=()=>{
+ i=(i+1)%themes.length;
+ success.style.display="none";
+ transfer.style.display="none";
+ payScreen.style.display="flex";
+ applyTheme();
+};
+
+payBtn.onclick=()=>{
+ payScreen.style.display="none";
+ transfer.style.display="flex";
+ startProjectiles();
+
+ setTimeout(()=>{
+   stopProjectiles();
+   transfer.style.display="none";
+   success.style.display="flex";
+   confetti();
+ },3000);
+};
+
+/* MONEY PROJECTILE */
+function startProjectiles(){
+ projectileInterval=setInterval(()=>{
+  const coin=document.createElement("div");
+  coin.className="money";
+  coin.textContent="₹";
+  arcZone.appendChild(coin);
+
+  const duration=1300;
+  const start=performance.now();
+
+  function animate(t){
+    const p=Math.min((t-start)/duration,1);
+    const x=12+(248-12)*p;
+    const y=-4*(p-.5)*(p-.5)+1;
+
+    coin.style.transform=
+      `translate(${x}px,${-y*120}px) rotate(${p*360}deg)`;
+
+    if(p<1) requestAnimationFrame(animate);
+    else coin.remove();
+  }
+
+  requestAnimationFrame(animate);
+ },220);
+}
+
+function stopProjectiles(){
+ clearInterval(projectileInterval);
+ arcZone.innerHTML="";
+}
+
+/* CONFETTI */
+function confetti(){
+ for(let j=0;j<40;j++){
+  const c=document.createElement("div");
+  c.className="confetti";
+  c.style.background=themes[i].accent;
+  frame.appendChild(c);
+  const a=Math.random()*Math.PI*2;
+  const d=Math.random()*260;
+  c.animate([
+   {transform:"translate(0,0)",opacity:1},
+   {transform:`translate(${Math.cos(a)*d}px,${Math.sin(a)*d}px)`,opacity:0}
+  ],{duration:2500});
+  setTimeout(()=>c.remove(),2500);
+ }
+}
+
+applyTheme();
+</script>
+
+</body>
+</html>
