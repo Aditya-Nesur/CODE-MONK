@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Food Order Success – Motion Premium</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:'Poppins',sans-serif;
+}
+
+body{
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:#040404;
+}
+
+/* ================= FRAME ================= */
+.frame{
+  width:360px;
+  height:640px;
+  border-radius:28px;
+  position:relative;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  backdrop-filter:blur(20px);
+  animation:fadeIn 0.6s ease;
+}
+
+/* ================= ANIMATED BACKGROUND ================= */
+.frame::before,
+.frame::after{
+  content:"";
+  position:absolute;
+  inset:-30%;
+  background:radial-gradient(circle at 30% 30%,var(--glow),transparent 55%);
+  animation:moveLight 12s linear infinite;
+}
+
+.frame::after{
+  background:radial-gradient(circle at 70% 70%,var(--glow2),transparent 55%);
+  animation-delay:-6s;
+}
+
+@keyframes moveLight{
+  0%{transform:translate(0,0)}
+  50%{transform:translate(-10%,10%)}
+  100%{transform:translate(0,0)}
+}
+
+/* ================= THEMES ================= */
+.theme-1{--bg:linear-gradient(135deg,#ffecd2,#fcb69f);--glow:#ff9f4366;--glow2:#ffd19466;--accent:#ff7a00;}
+.theme-2{--bg:linear-gradient(135deg,#0f2027,#203a43);--glow:#00f2fe66;--glow2:#4facfe66;--accent:#00f2fe;}
+.theme-3{--bg:linear-gradient(135deg,#141e30,#243b55);--glow:#6a85ff66;--glow2:#b06cff66;--accent:#6a85ff;}
+.theme-4{--bg:linear-gradient(135deg,#fdfbfb,#ebedee);--glow:#ffffffaa;--glow2:#d4fc7966;--accent:#2ecc71;}
+.theme-5{--bg:linear-gradient(135deg,#2c3e50,#bdc3c7);--glow:#f1c40f66;--glow2:#f39c1266;--accent:#f1c40f;}
+.theme-6{--bg:linear-gradient(135deg,#0f0c29,#302b63);--glow:#a855f766;--glow2:#6366f166;--accent:#a855f7;}
+.theme-7{--bg:linear-gradient(135deg,#ff512f,#dd2476);--glow:#ff2f9266;--glow2:#ff8a0066;--accent:#ff2f92;}
+.theme-8{--bg:linear-gradient(135deg,#11998e,#38ef7d);--glow:#38ef7d66;--glow2:#43e97b66;--accent:#38ef7d;}
+.theme-9{--bg:linear-gradient(135deg,#3e2723,#795548);--glow:#ffcc8066;--glow2:#ffd18066;--accent:#ffcc80;}
+.theme-10{--bg:linear-gradient(135deg,#232526,#414345);--glow:#00e5ff66;--glow2:#18ffff66;--accent:#00e5ff;}
+
+.frame{
+  background:var(--bg);
+  animation:gradientShift 10s ease infinite;
+}
+
+@keyframes gradientShift{
+  50%{filter:hue-rotate(15deg)}
+}
+
+/* ================= TOGGLE ================= */
+.toggle{
+  position:absolute;
+  top:14px;
+  right:14px;
+  padding:10px 16px;
+  border-radius:30px;
+  background:rgba(255,255,255,0.35);
+  backdrop-filter:blur(12px);
+  font-size:13px;
+  font-weight:600;
+  cursor:pointer;
+  z-index:5;
+  animation:floatBtn 3s ease-in-out infinite;
+}
+
+/* ================= SUCCESS ICON ================= */
+.circle{
+  width:120px;
+  height:120px;
+  border-radius:50%;
+  background:rgba(255,255,255,0.35);
+  backdrop-filter:blur(14px);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  box-shadow:0 0 50px var(--glow);
+  animation:pop 0.8s ease;
+}
+
+/* SVG Tick */
+svg{
+  width:70px;
+  height:70px;
+}
+
+path{
+  fill:none;
+  stroke:var(--accent);
+  stroke-width:6;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+  stroke-dasharray:100;
+  stroke-dashoffset:100;
+  animation:drawTick 1s ease forwards;
+}
+
+@keyframes drawTick{
+  to{stroke-dashoffset:0}
+}
+
+/* ================= TEXT ================= */
+h1{
+  margin-top:22px;
+  font-size:22px;
+  animation:slideUp 0.8s ease forwards;
+}
+
+.sub{
+  margin-top:6px;
+  font-size:13px;
+  opacity:0;
+  animation:fadeUp 0.8s ease forwards 0.3s;
+}
+
+.eta{
+  margin-top:18px;
+  padding:8px 20px;
+  border-radius:30px;
+  background:rgba(255,255,255,0.45);
+  backdrop-filter:blur(12px);
+  font-size:15px;
+  font-weight:600;
+  opacity:0;
+  animation:popIn 0.7s ease forwards 0.6s;
+}
+
+/* ================= DELIVERY ================= */
+.road{
+  position:absolute;
+  bottom:90px;
+  width:100%;
+  height:3px;
+  background:rgba(0,0,0,0.2);
+}
+
+.rider{
+  position:absolute;
+  bottom:65px;
+  left:-70px;
+  font-size:34px;
+  transform:scaleX(-1);
+  animation:ride 5s linear infinite, bob 0.6s ease-in-out infinite;
+}
+
+/* ================= CONFETTI ================= */
+.confetti{
+  position:absolute;
+  width:8px;
+  height:8px;
+  border-radius:50%;
+}
+
+/* ================= ANIMATIONS ================= */
+@keyframes ride{from{left:-70px}to{left:100%}}
+@keyframes bob{50%{transform:scaleX(-1) translateY(-2px)}}
+@keyframes slideUp{from{transform:translateY(20px);opacity:0}to{opacity:1}}
+@keyframes fadeUp{from{transform:translateY(15px);opacity:0}to{opacity:1}}
+@keyframes popIn{from{transform:scale(0.7);opacity:0}to{opacity:1}}
+@keyframes pop{from{transform:scale(0.6);opacity:0}to{opacity:1}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes floatBtn{50%{transform:translateY(-3px)}}
+</style>
+</head>
+
+<body>
+
+<div class="frame theme-1" id="frame">
+  <div class="toggle" onclick="switchTheme()">Theme</div>
+
+  <div class="circle">
+    <svg viewBox="0 0 52 40">
+      <path d="M2 22 L20 38 L50 2"/>
+    </svg>
+  </div>
+
+  <h1>Order Confirmed 🎉</h1>
+  <div class="sub">Your delicious food is on the way</div>
+  <div class="eta">Arriving in 28 mins</div>
+
+  <div class="road"></div>
+  <div class="rider">🛵</div>
+</div>
+
+<script>
+const frame=document.getElementById("frame");
+let theme=1;
+
+function switchTheme(){
+  theme=theme%10+1;
+
+  frame.className="";
+  void frame.offsetWidth;
+  frame.className=`frame theme-${theme}`;
+
+  confetti();
+}
+
+function confetti(){
+  for(let i=0;i<30;i++){
+    const c=document.createElement("div");
+    c.className="confetti";
+    c.style.background=`hsl(${Math.random()*360},80%,60%)`;
+    frame.appendChild(c);
+
+    const a=Math.random()*Math.PI*2,d=Math.random()*260;
+    c.animate([
+      {transform:"translate(0,0)",opacity:1},
+      {transform:`translate(${Math.cos(a)*d}px,${Math.sin(a)*d}px)`,opacity:0}
+    ],{duration:2200,easing:"ease-out"});
+
+    setTimeout(()=>c.remove(),2200);
+  }
+}
+
+setTimeout(confetti,700);
+</script>
+
+</body>
+</html>
