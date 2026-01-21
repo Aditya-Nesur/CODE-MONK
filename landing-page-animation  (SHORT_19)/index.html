@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Premium Login → Animated Gallery Landing</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Poppins,sans-serif}
+
+body{
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  overflow:hidden;
+  transition:background 0.8s ease;
+}
+
+/* ================= AMBIENT ================= */
+.ambient{
+  position:absolute;
+  width:520px;height:520px;
+  background:radial-gradient(circle,var(--glow),transparent 65%);
+  filter:blur(90px);
+  animation:pulse 6s ease-in-out infinite;
+}
+@keyframes pulse{
+  0%,100%{transform:scale(1)}
+  50%{transform:scale(1.35)}
+}
+
+/* ================= FRAME ================= */
+.frame{
+  width:360px;height:640px;
+  border-radius:32px;
+  position:relative;
+  overflow:hidden;
+  background:rgba(255,255,255,0.06);
+  backdrop-filter:blur(30px);
+  box-shadow:0 0 90px var(--glow);
+}
+
+/* ================= LOGIN ================= */
+.card{
+  width:85%;
+  padding:34px 24px;
+  border-radius:26px;
+  background:rgba(255,255,255,0.22);
+  backdrop-filter:blur(18px);
+  text-align:center;
+  margin:140px auto 0;
+  animation:float 4s ease-in-out infinite;
+}
+@keyframes float{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-14px)}
+}
+
+h1{color:#fff;margin-bottom:22px}
+
+input{
+  width:100%;
+  padding:14px;
+  margin-bottom:14px;
+  border:none;
+  border-radius:16px;
+  background:rgba(255,255,255,0.28);
+  color:#fff;
+}
+
+button{
+  width:100%;
+  padding:14px;
+  border:none;
+  border-radius:40px;
+  background:var(--accent);
+  font-weight:600;
+  cursor:pointer;
+}
+
+/* Loader */
+.loader{
+  width:24px;height:24px;
+  border:3px solid #000;
+  border-top-color:transparent;
+  border-radius:50%;
+  animation:spin 1s linear infinite;
+  margin:auto;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.tick{
+  width:30px;height:16px;
+  border-left:4px solid #000;
+  border-bottom:4px solid #000;
+  transform:rotate(-45deg);
+  margin:auto;
+}
+
+/* ================= LANDING ================= */
+.page{
+  position:absolute;
+  inset:0;
+  background:rgba(8,8,8,0.96);
+  backdrop-filter:blur(30px);
+  opacity:0;
+  transform:scale(1.1);
+  pointer-events:none;
+}
+
+.page.active{
+  opacity:1;
+  transform:scale(1);
+  pointer-events:auto;
+  transition:0.8s ease;
+}
+
+.page.exit{
+  opacity:0;
+  transform:scale(1.12);
+  pointer-events:none;
+  transition:0.6s ease;
+}
+
+/* ================= CELEBRATION ================= */
+.celebrate{
+  position:absolute;
+  inset:0;
+  background:radial-gradient(circle,var(--glow),transparent 70%);
+  opacity:0.35;
+  animation:celebrate 1.4s ease;
+}
+@keyframes celebrate{
+  from{transform:scale(0.6)}
+  to{transform:scale(1.3)}
+}
+
+/* ================= GALLERY ================= */
+.gallery{
+  padding:18px;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px;
+  margin-top:40px;
+}
+
+.imageCard{
+  height:150px;
+  border-radius:22px;
+  background:
+    linear-gradient(135deg,rgba(255,255,255,0.35),rgba(255,255,255,0.05)),
+    radial-gradient(circle at top,var(--glow),transparent 65%);
+  backdrop-filter:blur(14px);
+  opacity:0;
+  transform:translateY(40px);
+  animation:cardIn 0.8s ease forwards;
+}
+
+@keyframes zoom{to{opacity:1;transform:scale(1)}}
+@keyframes slide{to{opacity:1;transform:translateY(0)}}
+@keyframes fade{to{opacity:1}}
+
+/* ================= BOTTOM BACK ================= */
+.backBottom{
+  position:absolute;
+  bottom:16px;
+  left:50%;
+  transform:translateX(-50%);
+  width:80%;
+  padding:14px;
+  border-radius:40px;
+  background:rgba(255,255,255,0.22);
+  color:#fff;
+  border:none;
+  font-weight:600;
+  cursor:pointer;
+}
+
+/* ================= THEME BTN ================= */
+.themeBtn{
+  position:absolute;
+  top:14px;right:14px;
+  padding:8px 14px;
+  border-radius:20px;
+  background:rgba(255,255,255,0.25);
+  color:#fff;
+  border:none;
+  cursor:pointer;
+}
+
+/* ================= THEMES ================= */
+body.theme0{--glow:#00f2fe;--accent:#00f2fe;--anim:zoom;background:#000}
+body.theme1{--glow:#3b82f6;--accent:#60a5fa;--anim:slide;background:#020617}
+body.theme2{--glow:#ec4899;--accent:#f472b6;--anim:zoom;background:#020617}
+body.theme3{--glow:#fbbf24;--accent:#fde047;--anim:fade;background:#1c1917}
+body.theme4{--glow:#38bdf8;--accent:#7dd3fc;--anim:slide;background:#020617}
+body.theme5{--glow:#22c55e;--accent:#4ade80;--anim:zoom;background:#052e16}
+body.theme6{--glow:#fb7185;--accent:#fda4af;--anim:slide;background:#2b0f12}
+body.theme7{--glow:#e5e7eb;--accent:#f8fafc;--anim:fade;background:#020617}
+body.theme8{--glow:#ef4444;--accent:#f87171;--anim:zoom;background:#1f0a0a}
+body.theme9{--glow:#94a3b8;--accent:#e5e7eb;--anim:fade;background:#000}
+</style>
+</head>
+
+<body class="theme0">
+
+<div class="ambient"></div>
+
+<div class="frame">
+<button class="themeBtn" onclick="changeTheme()">Theme</button>
+
+<!-- LOGIN -->
+<div class="card" id="loginCard">
+  <h1>Welcome Back</h1>
+  <input placeholder="Email">
+  <input type="password" placeholder="Password">
+  <button id="login">Login</button>
+</div>
+
+<!-- LANDING -->
+<div class="page" id="page">
+  <div class="celebrate"></div>
+
+  <div class="gallery">
+    <div class="imageCard"></div>
+    <div class="imageCard"></div>
+    <div class="imageCard"></div>
+    <div class="imageCard"></div>
+  </div>
+
+  <button class="backBottom" onclick="goBack()">← Back to Login</button>
+</div>
+</div>
+
+<script>
+let theme = 0;
+const btn = document.getElementById("login");
+const page = document.getElementById("page");
+const card = document.getElementById("loginCard");
+
+function changeTheme(){
+  theme = (theme + 1) % 10;
+  document.body.className = "theme" + theme;
+}
+
+btn.onclick = ()=>{
+  btn.innerHTML = '<div class="loader"></div>';
+  setTimeout(()=>{
+    btn.innerHTML = '<div class="tick"></div>';
+    setTimeout(()=>{
+      card.style.display="none";
+      page.classList.remove("exit");
+      page.classList.add("active");
+
+      document.querySelectorAll(".imageCard").forEach((c,i)=>{
+        c.style.animation = `${getComputedStyle(document.body).getPropertyValue('--anim')} 0.8s ease forwards`;
+        c.style.animationDelay = `${i*0.15}s`;
+      });
+    },400);
+  },1200);
+};
+
+function goBack(){
+  page.classList.remove("active");
+  page.classList.add("exit");
+
+  setTimeout(()=>{
+    card.style.display="block";
+    btn.innerText="Login";
+  },600);
+}
+</script>
+
+</body>
+</html>
