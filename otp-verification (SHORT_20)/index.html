@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>OTP Verification – Ultra Premium</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --frame-bg:#ffffff;
+  --accent:#00c853;
+  --glow:#00e676;
+  --text:#111;
+  --sub:#666;
+}
+
+/* RESET */
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Poppins,sans-serif;
+}
+
+body{
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:#05070c;
+  overflow:hidden;
+}
+
+/* FRAME */
+.frame{
+  width:360px;
+  height:640px;
+  border-radius:30px;
+  background:var(--frame-bg);
+  color:var(--text);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  position:relative;
+  overflow:hidden;
+  box-shadow:
+    0 40px 120px rgba(0,0,0,.6),
+    inset 0 0 40px rgba(255,255,255,.08);
+  transition:.8s ease;
+}
+
+/* AMBIENT GLOWS */
+.ambient{
+  position:absolute;
+  width:240px;
+  height:240px;
+  background:radial-gradient(circle,var(--glow),transparent 70%);
+  filter:blur(90px);
+  opacity:.6;
+  animation:float 8s ease-in-out infinite;
+}
+.ambient.one{top:-80px;left:-80px;}
+.ambient.two{bottom:-80px;right:-80px;animation-delay:4s;}
+
+@keyframes float{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(30px)}
+}
+
+/* THEME TOGGLE */
+.toggle{
+  position:absolute;
+  top:16px;
+  right:16px;
+  width:42px;
+  height:42px;
+  border-radius:50%;
+  border:none;
+  background:linear-gradient(135deg,var(--accent),var(--glow));
+  color:#fff;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:18px;
+  box-shadow:0 0 20px var(--glow);
+  transition:.5s;
+}
+.toggle:active{transform:rotate(180deg) scale(.9);}
+
+/* TITLE */
+h1{
+  font-size:22px;
+}
+.sub{
+  font-size:13px;
+  color:var(--sub);
+  margin-top:6px;
+}
+
+/* OTP */
+.otp{
+  display:flex;
+  gap:10px;
+  margin-top:28px;
+}
+.otp input{
+  width:44px;
+  height:56px;
+  border-radius:14px;
+  border:2px solid #ddd;
+  text-align:center;
+  font-size:20px;
+  outline:none;
+  transition:.3s;
+}
+.otp input:focus{
+  border-color:var(--accent);
+  box-shadow:0 0 18px var(--glow);
+  transform:translateY(-4px);
+}
+
+/* BUTTON */
+button.verify{
+  margin-top:28px;
+  width:72%;
+  padding:15px;
+  border:none;
+  border-radius:40px;
+  background:linear-gradient(135deg,var(--accent),var(--glow));
+  color:#fff;
+  font-size:16px;
+  cursor:pointer;
+  transition:.4s;
+}
+button.verify:hover{transform:scale(1.05);}
+
+/* LOADER */
+.loader{
+  width:24px;
+  height:24px;
+  border:3px solid #fff;
+  border-top-color:transparent;
+  border-radius:50%;
+  animation:spin 1s linear infinite;
+  margin:auto;
+}
+
+/* TIMER */
+.timer{
+  margin-top:14px;
+  font-size:12px;
+  color:var(--sub);
+}
+
+/* SUCCESS OVERLAY */
+.success{
+  position:absolute;
+  inset:0;
+  backdrop-filter:blur(12px);
+  background:rgba(0,0,0,.55);
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  opacity:0;
+  pointer-events:none;
+  transition:.6s;
+}
+.success.show{
+  opacity:1;
+  pointer-events:auto;
+}
+
+.circle{
+  width:130px;
+  height:130px;
+  border-radius:50%;
+  border:6px solid var(--glow);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  margin-bottom:18px;
+  animation:pulse 2s infinite;
+}
+
+.tick{
+  width:34px;
+  height:18px;
+  border-left:4px solid var(--glow);
+  border-bottom:4px solid var(--glow);
+  transform:rotate(-45deg);
+}
+
+/* BACK BUTTON */
+.back{
+  margin-top:24px;
+  padding:10px 26px;
+  border-radius:30px;
+  border:2px solid var(--glow);
+  background:transparent;
+  color:var(--glow);
+  cursor:pointer;
+  transition:.4s;
+}
+.back:hover{
+  background:var(--glow);
+  color:#000;
+}
+
+/* ANIMATIONS */
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pulse{
+  0%{box-shadow:0 0 10px var(--glow)}
+  50%{box-shadow:0 0 45px var(--glow)}
+  100%{box-shadow:0 0 10px var(--glow)}
+}
+</style>
+</head>
+
+<body>
+
+<div class="frame">
+  <div class="ambient one"></div>
+  <div class="ambient two"></div>
+
+  <button class="toggle" id="toggle">🎨</button>
+
+  <h1>OTP Verification</h1>
+  <div class="sub">Enter OTP sent to +91 •••• 4321</div>
+
+  <div class="otp">
+    <input maxlength="1">
+    <input maxlength="1">
+    <input maxlength="1">
+    <input maxlength="1">
+    <input maxlength="1">
+    <input maxlength="1">
+  </div>
+
+  <button class="verify" id="verify">Verify</button>
+  <div class="timer">Resend OTP in 00:29</div>
+
+  <div class="success" id="success">
+    <div class="circle"><div class="tick"></div></div>
+    <div style="color:var(--glow);font-size:22px">Verified</div>
+    <button class="back" id="back">Back</button>
+  </div>
+</div>
+
+<script>
+const inputs=[...document.querySelectorAll(".otp input")];
+const verify=document.getElementById("verify");
+const success=document.getElementById("success");
+const back=document.getElementById("back");
+const toggle=document.getElementById("toggle");
+
+/* OTP logic */
+inputs.forEach((i,idx)=>{
+  i.addEventListener("input",()=>i.value && inputs[idx+1]?.focus());
+});
+
+/* THEMES */
+/* THEMES – COMPLETELY DISTINCT */
+const themes=[
+/* 1. Glass Ice */
+{ bg:"rgba(255,255,255,.18)", accent:"#7dd3fc", glow:"#bae6fd" },
+
+/* 2. Neon Matrix */
+{ bg:"#020617", accent:"#00ff9c", glow:"#00ff9c" },
+
+/* 3. Aurora Borealis */
+{ bg:"#0b1025", accent:"#8b5cf6", glow:"#22d3ee" },
+
+/* 4. Obsidian Gold */
+{ bg:"#0a0a0a", accent:"#facc15", glow:"#fde047" },
+
+/* 5. Candy Pop */
+{ bg:"#ffffff", accent:"#ec4899", glow:"#fb7185" },
+
+/* 6. Peach Cream */
+{ bg:"#fff7ed", accent:"#fb923c", glow:"#fed7aa" },
+
+/* 7. Cyber Yellow */
+{ bg:"#111827", accent:"#facc15", glow:"#fde047" },
+
+/* 8. Monochrome Ink */
+{ bg:"#ffffff", accent:"#000000", glow:"#444444" },
+
+/* 9. Lava Sunset */
+{ bg:"#fff5f5", accent:"#ef4444", glow:"#fb7185" },
+
+/* 10. Deep Ocean */
+{ bg:"#e0f7fa", accent:"#0284c7", glow:"#38bdf8" }
+];
+
+
+let index=0;
+function applyTheme(){
+  const t=themes[index];
+  document.documentElement.style.setProperty("--frame-bg",t.bg);
+  document.documentElement.style.setProperty("--accent",t.accent);
+  document.documentElement.style.setProperty("--glow",t.glow);
+}
+applyTheme();
+
+toggle.onclick=()=>{
+  index=(index+1)%themes.length;
+  applyTheme();
+};
+
+/* VERIFY */
+verify.onclick=()=>{
+  verify.innerHTML='<div class="loader"></div>';
+  setTimeout(()=>success.classList.add("show"),1200);
+};
+
+/* BACK */
+back.onclick=()=>{
+  success.classList.remove("show");
+  verify.innerText="Verify";
+};
+</script>
+
+</body>
+</html>
