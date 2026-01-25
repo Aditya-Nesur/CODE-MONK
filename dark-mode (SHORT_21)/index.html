@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Advanced Settings – Global Themes</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Poppins,sans-serif}
+
+body{
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:radial-gradient(circle at top,var(--glow),#050505 60%);
+  transition:0.8s cubic-bezier(.4,0,.2,1);
+  overflow:hidden;
+}
+
+/* ===== THEME VARIABLES ===== */
+:root{
+  --bg:#ffffff;
+  --card:#f4f4f4;
+  --text:#111;
+  --accent:#00c6ff;
+  --glow:rgba(0,198,255,0.5);
+}
+
+/* ===== FRAME ===== */
+.frame{
+  width:360px;
+  height:640px;
+  border-radius:26px;
+  background:var(--bg);
+  color:var(--text);
+  overflow:hidden;
+  position:relative;
+  transition:0.6s cubic-bezier(.4,0,.2,1);
+  box-shadow:0 25px 60px rgba(0,0,0,0.6);
+}
+
+/* ===== AMBIENT ===== */
+.ambient{
+  position:absolute;
+  inset:-100px;
+  background:
+    radial-gradient(circle at 20% 10%,var(--glow),transparent 45%),
+    radial-gradient(circle at 90% 90%,var(--glow),transparent 45%);
+  filter:blur(90px);
+  z-index:0;
+}
+
+/* ===== HEADER ===== */
+.header{
+  padding:22px;
+  background:linear-gradient(135deg,var(--accent),transparent);
+  position:relative;
+  z-index:2;
+}
+
+.header h1{font-size:22px}
+
+.profile{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  margin-top:16px;
+}
+
+.avatar{
+  width:46px;
+  height:46px;
+  border-radius:50%;
+  background:linear-gradient(135deg,var(--accent),#000);
+  box-shadow:0 0 18px var(--glow);
+}
+
+.name{font-size:15px}
+
+/* ===== SETTINGS ===== */
+.settings{
+  padding:20px;
+  position:relative;
+  z-index:2;
+}
+
+.item{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:14px 0;
+  border-bottom:1px solid rgba(0,0,0,0.08);
+}
+
+.frame.dark .item{border-color:#222}
+
+.item span{font-size:14px}
+
+/* ===== TOGGLE ===== */
+.toggle{
+  width:52px;
+  height:26px;
+  background:#ccc;
+  border-radius:20px;
+  position:relative;
+  cursor:pointer;
+  transition:0.4s;
+}
+
+.toggle::after{
+  content:"";
+  position:absolute;
+  width:22px;
+  height:22px;
+  background:#fff;
+  border-radius:50%;
+  top:2px;
+  left:2px;
+  transition:0.4s;
+}
+
+.frame.dark{
+  --bg:#0e1118;
+  --card:#151922;
+  --text:#f1f1f1;
+}
+
+.frame.dark .toggle{
+  background:var(--accent);
+  box-shadow:0 0 14px var(--glow);
+}
+
+.frame.dark .toggle::after{left:28px}
+
+/* ===== FLOATING THEME BUTTON ===== */
+.theme-toggle{
+  position:fixed;
+  top:18px;
+  right:18px;
+  width:48px;
+  height:48px;
+  border-radius:50%;
+  background:linear-gradient(135deg,var(--accent),#000);
+  box-shadow:0 0 25px var(--glow);
+  border:none;
+  color:white;
+  font-size:20px;
+  cursor:pointer;
+  z-index:999;
+}
+
+/* ===== THEME PANEL ===== */
+.theme-panel{
+  position:fixed;
+  top:80px;
+  right:18px;
+  background:rgba(20,20,20,0.75);
+  backdrop-filter:blur(12px);
+  border-radius:18px;
+  padding:14px;
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:10px;
+  transform:scale(0);
+  opacity:0;
+  transition:0.4s cubic-bezier(.4,0,.2,1);
+  z-index:999;
+}
+
+.theme-panel.show{
+  transform:scale(1);
+  opacity:1;
+}
+
+.theme-btn{
+  width:34px;
+  height:34px;
+  border-radius:10px;
+  border:none;
+  cursor:pointer;
+}
+
+/* ===== 10 PREMIUM THEMES ===== */
+.theme-ocean{--accent:#00c6ff;--glow:rgba(0,198,255,0.6)}
+.theme-cyber{--accent:#b100ff;--glow:rgba(177,0,255,0.6)}
+.theme-sunset{--accent:#ff6a00;--glow:rgba(255,106,0,0.6)}
+.theme-forest{--accent:#1db954;--glow:rgba(29,185,84,0.6)}
+.theme-royal{--accent:#6a5acd;--glow:rgba(106,90,205,0.6)}
+.theme-mono{--accent:#444;--glow:rgba(120,120,120,0.6)}
+.theme-candy{--accent:#ff4fd8;--glow:rgba(255,79,216,0.6)}
+.theme-teal{--accent:#00ffd5;--glow:rgba(0,255,213,0.6)}
+.theme-gold{--accent:#ffcc00;--glow:rgba(255,204,0,0.6)}
+.theme-blood{--accent:#ff2e2e;--glow:rgba(255,46,46,0.6)}
+
+.icon{opacity:0.6}
+</style>
+</head>
+
+<body class="theme-ocean" id="body">
+
+<button class="theme-toggle" onclick="togglePanel()">🎨</button>
+
+<div class="theme-panel" id="panel">
+  <button class="theme-btn theme-ocean" onclick="setTheme('theme-ocean')"></button>
+  <button class="theme-btn theme-cyber" onclick="setTheme('theme-cyber')"></button>
+  <button class="theme-btn theme-sunset" onclick="setTheme('theme-sunset')"></button>
+  <button class="theme-btn theme-forest" onclick="setTheme('theme-forest')"></button>
+  <button class="theme-btn theme-royal" onclick="setTheme('theme-royal')"></button>
+
+  <button class="theme-btn theme-mono" onclick="setTheme('theme-mono')"></button>
+  <button class="theme-btn theme-candy" onclick="setTheme('theme-candy')"></button>
+  <button class="theme-btn theme-teal" onclick="setTheme('theme-teal')"></button>
+  <button class="theme-btn theme-gold" onclick="setTheme('theme-gold')"></button>
+  <button class="theme-btn theme-blood" onclick="setTheme('theme-blood')"></button>
+</div>
+
+<div class="frame theme-ocean" id="frame">
+  <div class="ambient"></div>
+
+  <div class="header">
+    <h1>Settings</h1>
+    <div class="profile">
+      <div class="avatar"></div>
+      <div class="name">Aditya</div>
+    </div>
+  </div>
+
+  <div class="settings">
+    <div class="item">
+      <span>Dark Mode</span>
+      <div class="toggle" id="toggle"></div>
+    </div>
+
+    <div class="item">
+      <span>Notifications</span>
+      <span class="icon">🔔</span>
+    </div>
+
+    <div class="item">
+      <span>Privacy</span>
+      <span class="icon">🔒</span>
+    </div>
+
+    <div class="item">
+      <span>Help & Support</span>
+      <span class="icon">❓</span>
+    </div>
+  </div>
+</div>
+
+<script>
+const frame = document.getElementById("frame");
+const body = document.getElementById("body");
+const toggle = document.getElementById("toggle");
+const panel = document.getElementById("panel");
+
+toggle.onclick = ()=> frame.classList.toggle("dark");
+
+function togglePanel(){
+  panel.classList.toggle("show");
+}
+
+function setTheme(theme){
+  body.className = theme;
+  frame.className = "frame " + theme + (frame.classList.contains("dark") ? " dark" : "");
+  panel.classList.remove("show");
+}
+</script>
+
+</body>
+</html>
