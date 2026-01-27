@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Live Order Tracking – Multi Theme</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Poppins,sans-serif}
+
+:root{
+  --bg1:#0f172a;
+  --bg2:#020617;
+  --accent1:#6366f1;
+  --accent2:#22d3ee;
+  --ambient:#6366f1;
+}
+
+body{
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:#05070c;
+  overflow:hidden;
+}
+
+/* Ambient */
+.ambient{
+  position:absolute;
+  width:520px;
+  height:520px;
+  background:radial-gradient(circle,var(--ambient),transparent 65%);
+  filter:blur(160px);
+  opacity:.35;
+  transition:.8s;
+}
+
+/* Frame */
+.frame{
+  width:360px;
+  height:640px;
+  background:linear-gradient(180deg,var(--bg1),var(--bg2));
+  border-radius:28px;
+  padding:40px 26px;
+  color:#fff;
+  position:relative;
+  display:flex;
+  flex-direction:column;
+  box-shadow:0 0 80px var(--ambient);
+  transition:.6s;
+}
+
+/* Toggle */
+.toggle{
+  position:absolute;
+  top:18px;
+  right:18px;
+  width:42px;height:42px;
+  border-radius:50%;
+  background:linear-gradient(135deg,var(--accent1),var(--accent2));
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  font-size:18px;
+  color:#020617;
+  box-shadow:0 0 24px var(--accent1);
+}
+
+/* Header */
+.header{text-align:center;margin-top:20px}
+.header h2{font-weight:600}
+.header p{font-size:13px;color:#94a3b8;margin-top:6px}
+
+/* Card */
+.card{
+  margin-top:28px;
+  padding:16px;
+  border-radius:20px;
+  background:rgba(255,255,255,.05);
+  backdrop-filter:blur(12px);
+}
+.card span{font-size:12px;color:#94a3b8}
+.card strong{display:block;margin:4px 0}
+
+/* Tracker */
+.tracker{margin-top:60px;position:relative}
+
+.line{
+  position:absolute;
+  top:22px;
+  left:18px;
+  right:18px;
+  height:6px;
+  background:#1e293b;
+  border-radius:6px;
+  overflow:hidden;
+  z-index:1; /* ✅ behind steps */
+}
+
+.progress{
+  height:100%;
+  width:0%;
+  background:linear-gradient(90deg,var(--accent1),var(--accent2));
+  background-size:200% 100%;
+  animation:flow 2s linear infinite;
+  transition:width .8s ease;
+}
+
+@keyframes flow{
+  from{background-position:0%}
+  to{background-position:200%}
+}
+
+/* Steps */
+.steps{
+  display:flex;
+  justify-content:space-between;
+  position:relative;
+  z-index:2; /* ✅ above progress bar */
+}
+
+.step{text-align:center;width:54px}
+
+.circle{
+  width:48px;height:48px;
+  border-radius:50%;
+  border:2px solid #1e293b;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#020617;
+  color:#64748b;
+  transition:.4s;
+}
+
+.step.active .circle{
+  background:linear-gradient(135deg,var(--accent1),var(--accent2));
+  color:#020617;
+  border:none;
+  box-shadow:0 0 28px var(--accent1);
+  animation:pop .4s ease;
+}
+
+@keyframes pop{
+  from{transform:scale(.5)}
+  to{transform:scale(1)}
+}
+
+.label{
+  font-size:11px;
+  margin-top:10px;
+  color:#64748b;
+}
+.step.active .label{color:#e5e7eb}
+
+/* Status */
+.status{text-align:center;margin-top:40px}
+.status h3{font-size:16px;font-weight:500}
+.status p{font-size:12px;color:#94a3b8;margin-top:6px}
+
+/* Button */
+button{
+  margin-top:auto;
+  padding:14px;
+  border:none;
+  border-radius:16px;
+  font-size:14px;
+  cursor:pointer;
+  background:linear-gradient(135deg,var(--accent1),var(--accent2));
+  color:#020617;
+  font-weight:500;
+}
+button:active{transform:scale(.96)}
+</style>
+</head>
+
+<body>
+
+<div class="ambient"></div>
+
+<div class="frame">
+  <div class="toggle" onclick="switchTheme()">🎨</div>
+
+  <div class="header">
+    <h2>Order Status</h2>
+    <p>Live package tracking</p>
+  </div>
+
+  <div class="card">
+    <span>Order ID</span>
+    <strong>#ORD-89231</strong>
+    <span>Expected Delivery</span>
+    <strong>Today, 6:30 PM</strong>
+  </div>
+
+  <div class="tracker">
+    <div class="line"><div class="progress" id="progress"></div></div>
+    <div class="steps">
+      <div class="step"><div class="circle">✓</div><div class="label">Placed</div></div>
+      <div class="step"><div class="circle">2</div><div class="label">Packed</div></div>
+      <div class="step"><div class="circle">3</div><div class="label">Shipped</div></div>
+      <div class="step"><div class="circle">4</div><div class="label">Delivered</div></div>
+    </div>
+  </div>
+
+  <div class="status">
+    <h3 id="title">Order Placed</h3>
+    <p id="time">Just now</p>
+  </div>
+
+  <button onclick="nextStep()">Update Status</button>
+</div>
+
+<script>
+const steps = document.querySelectorAll(".step");
+const progress = document.getElementById("progress");
+const title = document.getElementById("title");
+const time = document.getElementById("time");
+
+let current = 0;
+const duration = 800; // must match CSS transition
+
+function nextStep(){
+  if(current >= steps.length) return;
+
+  // ▶️ Move progress first
+  const percent = (current / (steps.length - 1)) * 100;
+  progress.style.width = percent + "%";
+
+  // ⏱️ After progress reaches step → activate it
+  setTimeout(()=>{
+    steps[current].classList.add("active");
+    title.innerText = steps[current].querySelector(".label").innerText + " Completed";
+    time.innerText = new Date().toLocaleTimeString([], {
+      hour:'2-digit',
+      minute:'2-digit'
+    });
+    current++;
+  }, duration);
+}
+
+/* 🔄 RESET */
+function resetAnimation(){
+  current = 0;
+  steps.forEach(s => s.classList.remove("active"));
+  progress.style.width = "0%";
+  title.innerText = "Order Placed";
+  time.innerText = "Just now";
+}
+
+/* 🎨 THEMES */
+const themes=[
+ {bg1:"#0f172a",bg2:"#020617",a1:"#6366f1",a2:"#22d3ee",amb:"#6366f1"},
+ {bg1:"#020617",bg2:"#000",a1:"#22c55e",a2:"#4ade80",amb:"#22c55e"},
+ {bg1:"#140024",bg2:"#020617",a1:"#c084fc",a2:"#818cf8",amb:"#c084fc"},
+ {bg1:"#00111a",bg2:"#000",a1:"#38bdf8",a2:"#0ea5e9",amb:"#38bdf8"},
+ {bg1:"#190000",bg2:"#020617",a1:"#ef4444",a2:"#f97316",amb:"#ef4444"},
+ {bg1:"#020617",bg2:"#020617",a1:"#facc15",a2:"#fde047",amb:"#facc15"},
+ {bg1:"#001f1f",bg2:"#020617",a1:"#2dd4bf",a2:"#14b8a6",amb:"#2dd4bf"},
+ {bg1:"#000",bg2:"#000",a1:"#e879f9",a2:"#22d3ee",amb:"#e879f9"},
+ {bg1:"#111827",bg2:"#030712",a1:"#fb7185",a2:"#f472b6",amb:"#fb7185"},
+ {bg1:"#020617",bg2:"#000",a1:"#fff",a2:"#94a3b8",amb:"#fff"}
+];
+
+let t=0;
+function switchTheme(){
+  t=(t+1)%themes.length;
+  const th=themes[t];
+  document.documentElement.style.setProperty("--bg1",th.bg1);
+  document.documentElement.style.setProperty("--bg2",th.bg2);
+  document.documentElement.style.setProperty("--accent1",th.a1);
+  document.documentElement.style.setProperty("--accent2",th.a2);
+  document.documentElement.style.setProperty("--ambient",th.amb);
+  resetAnimation();
+}
+</script>
+
+
+</body>
+</html>
