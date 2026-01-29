@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Premium Music Player – Theme Showcase</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Poppins,sans-serif}
+
+body{
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:#050505;
+}
+
+/* ================= FRAME ================= */
+.frame{
+  width:360px;
+  height:640px;
+  border-radius:28px;
+  padding:30px 24px;
+  color:#fff;
+  position:relative;
+  overflow:hidden;
+  transition:.6s;
+}
+
+/* ================= THEMES ================= */
+.frame[data-theme="0"]{background:linear-gradient(180deg,#14142b,#000);--c1:#6a11cb;--c2:#00f2fe;--c3:#ff4ecd}
+.frame[data-theme="1"]{background:linear-gradient(180deg,#2b0f1f,#000);--c1:#ff416c;--c2:#ff4b2b;--c3:#ffd200}
+.frame[data-theme="2"]{background:linear-gradient(180deg,#120018,#000);--c1:#8e2de2;--c2:#4a00e0;--c3:#ff00cc}
+.frame[data-theme="3"]{background:linear-gradient(180deg,#001a12,#000);--c1:#00ff99;--c2:#00c853;--c3:#b2ff59}
+.frame[data-theme="4"]{background:linear-gradient(180deg,#1a0000,#000);--c1:#ff1744;--c2:#ff9100;--c3:#ff5252}
+.frame[data-theme="5"]{background:linear-gradient(180deg,#00141f,#000);--c1:#00e5ff;--c2:#18ffff;--c3:#84ffff}
+.frame[data-theme="6"]{background:linear-gradient(180deg,#1c1600,#000);--c1:#ffd54f;--c2:#ffb300;--c3:#fff176}
+.frame[data-theme="7"]{background:linear-gradient(180deg,#00161a,#000);--c1:#00e5ff;--c2:#1de9b6;--c3:#64ffda}
+.frame[data-theme="8"]{background:linear-gradient(180deg,#12001f,#000);--c1:#651fff;--c2:#7c4dff;--c3:#b388ff}
+.frame[data-theme="9"]{background:linear-gradient(180deg,#1f0012,#000);--c1:#ff4081;--c2:#ff80ab;--c3:#ea80fc}
+
+/* ================= AMBIENT ================= */
+.inner-ambient{position:absolute;inset:0;z-index:0}
+.blob{
+  position:absolute;
+  width:300px;height:300px;
+  border-radius:50%;
+  filter:blur(110px);
+  opacity:.55;
+  mix-blend-mode:screen;
+  animation:pulse 4s ease-in-out infinite;
+  animation-play-state:paused;
+}
+.frame.playing .blob{animation-play-state:running}
+
+@keyframes pulse{
+  50%{transform:scale(1.2)}
+}
+
+.b1{background:var(--c1);top:-90px;left:-80px}
+.b2{background:var(--c2);bottom:-110px;right:-80px}
+.b3{background:var(--c3);top:240px;right:-120px}
+
+/* ================= CONTENT ================= */
+.content{position:relative;z-index:2}
+
+/* ================= THEME TOGGLE ================= */
+.theme-toggle{
+  position:absolute;
+  top:16px;right:16px;
+  width:38px;height:38px;
+  border-radius:50%;
+  background:linear-gradient(135deg,var(--c1),var(--c2));
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  cursor:pointer;
+  box-shadow:0 0 20px var(--c2);
+  z-index:10;
+}
+
+/* ================= ALBUM ================= */
+.album-wrap{
+  height:260px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+.album-rotator{
+  width:200px;height:200px;
+  animation:spin 12s linear infinite;
+  animation-play-state:paused;
+}
+.frame.playing .album-rotator{animation-play-state:running}
+
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.album{
+  width:100%;height:100%;
+  border-radius:22px;
+  background:linear-gradient(135deg,var(--c2),var(--c3));
+  box-shadow:0 0 40px var(--c2);
+}
+
+/* ================= INFO ================= */
+.info{text-align:center;margin-top:10px}
+.info p{opacity:.6;font-size:13px}
+
+/* ================= EQ ================= */
+.eq{display:flex;justify-content:center;gap:6px;margin:28px 0}
+.eq span{
+  width:6px;
+  height:14px;
+  border-radius:10px;
+  background:linear-gradient(180deg,var(--c2),var(--c3));
+  animation:eq 1s ease-in-out infinite alternate;
+  animation-play-state:paused;
+}
+.frame.playing .eq span{animation-play-state:running}
+
+.eq span:nth-child(2){animation-delay:.1s}
+.eq span:nth-child(3){animation-delay:.2s}
+.eq span:nth-child(4){animation-delay:.3s}
+.eq span:nth-child(5){animation-delay:.4s}
+
+@keyframes eq{
+  from{height:10px}
+  to{height:38px}
+}
+
+/* ================= PROGRESS ================= */
+.progress{
+  height:6px;
+  background:#222;
+  border-radius:10px;
+  overflow:hidden;
+}
+.fill{
+  width:100%;
+  height:100%;
+  background:linear-gradient(90deg,var(--c1),var(--c2),var(--c3));
+  background-size:200% 100%;
+  animation:flow 2s linear infinite;
+  animation-play-state:paused;
+}
+.frame.playing .fill{animation-play-state:running}
+
+@keyframes flow{to{background-position:200%}}
+
+/* ================= CONTROLS ================= */
+.controls{display:flex;justify-content:center;margin-top:30px}
+.play{
+  width:70px;height:70px;
+  border-radius:50%;
+  background:linear-gradient(135deg,var(--c2),var(--c3));
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  font-size:26px;
+  color:#000;
+  cursor:pointer;
+  box-shadow:0 0 30px var(--c2);
+}
+</style>
+</head>
+
+<body>
+
+<div class="frame" id="player" data-theme="0">
+
+  <div class="theme-toggle" id="themeBtn">🎨</div>
+
+  <div class="inner-ambient">
+    <div class="blob b1"></div>
+    <div class="blob b2"></div>
+    <div class="blob b3"></div>
+  </div>
+
+  <div class="content">
+
+    <div class="album-wrap">
+      <div class="album-rotator">
+        <div class="album"></div>
+      </div>
+    </div>
+
+    <div class="info">
+      <h3>Energetic Beats</h3>
+      <p>Theme Showcase Mode</p>
+    </div>
+
+    <div class="eq">
+      <span></span><span></span><span></span><span></span><span></span>
+    </div>
+
+    <div class="progress">
+      <div class="fill"></div>
+    </div>
+
+    <div class="controls">
+      <div class="play" id="playBtn">▶</div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const player=document.getElementById("player");
+const themeBtn=document.getElementById("themeBtn");
+const playBtn=document.getElementById("playBtn");
+
+let theme=0;
+let playing=false;
+
+// RESET ALL ANIMATIONS CLEANLY
+function resetAnimations(){
+  player.classList.remove("playing");
+  void player.offsetWidth; // 🔥 force reflow
+  if(playing) player.classList.add("playing");
+}
+
+// PLAY BUTTON
+playBtn.onclick=()=>{
+  playing=!playing;
+  playBtn.textContent=playing?"⏸":"▶";
+  resetAnimations();
+};
+
+// THEME SWITCH
+themeBtn.onclick=()=>{
+  theme=(theme+1)%10;
+  player.dataset.theme=theme;
+  resetAnimations();
+};
+</script>
+
+</body>
+</html>
