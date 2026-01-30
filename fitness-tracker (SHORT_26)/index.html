@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Elite Fitness Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Poppins,sans-serif;
+}
+
+body{
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:#05070c;
+  transition:background 0.8s ease;
+  overflow:hidden;
+}
+
+/* ================= FRAME ================= */
+.frame{
+  width:360px;
+  height:640px;
+  border-radius:30px;
+  overflow:hidden;
+  position:relative;
+  color:#fff;
+  transition:all 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  box-shadow:0 20px 40px rgba(0,0,0,0.4);
+  background:linear-gradient(135deg, #0a0d13, #1a1f2e);
+}
+
+/* ================= THEME TOGGLE ================= */
+.theme-toggle{
+  position:absolute;
+  top:20px;
+  right:20px;
+  z-index:10;
+  width:46px;
+  height:46px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  font-size:20px;
+  transition:all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  background:rgba(255,255,255,0.15);
+  backdrop-filter:blur(15px);
+  border:2px solid rgba(255,255,255,0.2);
+  box-shadow:0 0 20px rgba(255,255,255,0.1),
+             0 0 40px rgba(255,255,255,0.05),
+             inset 0 0 20px rgba(255,255,255,0.1);
+  animation:pulseGlow 3s infinite alternate;
+}
+
+.theme-toggle:hover{
+  transform:rotate(360deg) scale(1.15);
+  background:rgba(255,255,255,0.25);
+  box-shadow:0 0 30px rgba(255,255,255,0.2),
+             0 0 60px rgba(255,255,255,0.1),
+             inset 0 0 30px rgba(255,255,255,0.2);
+}
+
+@keyframes pulseGlow {
+  0%{box-shadow:0 0 20px rgba(255,255,255,0.1),
+               0 0 40px rgba(255,255,255,0.05),
+               inset 0 0 20px rgba(255,255,255,0.1);}
+  100%{box-shadow:0 0 30px rgba(255,255,255,0.2),
+               0 0 60px rgba(255,255,255,0.1),
+               inset 0 0 30px rgba(255,255,255,0.2);}
+}
+
+/* ================= AMBIENT LIGHTS ================= */
+.ambient{
+  position:absolute;
+  width:500px;
+  height:500px;
+  filter:blur(120px);
+  opacity:0.7;
+  transition:all 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  animation:float 20s infinite alternate ease-in-out;
+}
+.ambient.home{
+  top:-200px;
+  left:-200px;
+}
+.ambient.home2{
+  bottom:-200px;
+  right:-200px;
+}
+
+@keyframes float {
+  0%{transform:translate(0,0) scale(1);}
+  33%{transform:translate(30px,-30px) scale(1.1);}
+  66%{transform:translate(-20px,20px) scale(0.95);}
+  100%{transform:translate(0,0) scale(1);}
+}
+
+/* ================= NEON GRID BACKGROUND ================= */
+.neon-grid{
+  position:absolute;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:
+    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px);
+  background-size:30px 30px;
+  opacity:0.4;
+  animation:gridMove 20s linear infinite;
+}
+
+@keyframes gridMove{
+  0%{transform:translate(0,0);}
+  100%{transform:translate(30px,30px);}
+}
+
+/* ================= HEADER ================= */
+.header{
+  padding:22px;
+  position:relative;
+  z-index:2;
+}
+.header h2{
+  font-weight:500;
+  font-size:26px;
+  background:linear-gradient(90deg, #fff, rgba(255,255,255,0.8));
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.header span{
+  font-size:12px;
+  opacity:.8;
+  letter-spacing:1px;
+}
+
+/* ================= LIST ================= */
+.list{
+  padding:0 16px;
+  position:relative;
+  z-index:2;
+}
+
+.card{
+  position:relative;
+  background:rgba(255,255,255,.08);
+  border-radius:24px;
+  padding:18px;
+  display:flex;
+  gap:16px;
+  align-items:center;
+  margin-bottom:16px;
+  cursor:pointer;
+  overflow:hidden;
+  transform:translateY(40px);
+  opacity:0;
+  animation:cardIn .7s forwards;
+  transition:all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  border:1px solid rgba(255,255,255,0.1);
+  box-shadow:0 8px 32px rgba(0,0,0,0.2);
+}
+.card::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(120deg,transparent,rgba(255,255,255,.15),transparent);
+  opacity:0;
+  transition:.6s;
+}
+.card:hover{
+  transform:translateY(-5px) scale(1.02);
+  box-shadow:0 15px 40px rgba(0,0,0,0.3);
+}
+.card:hover::before{opacity:1}
+
+.card:nth-child(n){animation-delay:calc(var(--i)*.07s)}
+
+@keyframes cardIn{
+  to{transform:translateY(0);opacity:1}
+}
+
+.icon{
+  width:52px;
+  height:52px;
+  border-radius:50%;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  font-size:24px;
+  background:linear-gradient(135deg,var(--c1),var(--c2));
+  box-shadow:0 0 25px var(--c2),
+             0 0 50px var(--c2, rgba(0,0,0,0.2));
+  transition:all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  animation:iconFloat 3s infinite alternate ease-in-out;
+}
+
+@keyframes iconFloat{
+  0%{transform:translateY(0px);}
+  100%{transform:translateY(-5px);}
+}
+
+.card:hover .icon{
+  transform:scale(1.1);
+  box-shadow:0 0 35px var(--c2),
+             0 0 70px var(--c2, rgba(0,0,0,0.3));
+}
+
+.card h4{
+  font-weight:500;
+  font-size:16px;
+  letter-spacing:0.5px;
+}
+.card p{
+  font-size:12px;
+  opacity:.8;
+  letter-spacing:0.3px;
+}
+
+/* ================= MODAL ================= */
+.modal{
+  position:absolute;
+  inset:0;
+  background:#0a0d13;
+  z-index:5;
+  transform:translateY(100%);
+  transition:.7s cubic-bezier(.22,1,.36,1);
+  overflow:hidden;
+  border-radius:30px;
+  display:flex;
+  flex-direction:column;
+}
+.modal.active{transform:translateY(0)}
+
+/* ================= MODAL HEADER WITH BACK BUTTON ================= */
+.modalHeader{
+  padding:20px 22px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  flex-shrink:0;
+}
+
+.back-button{
+  cursor:pointer;
+  width:36px;
+  height:36px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:50%;
+  background:rgba(255,255,255,.12);
+  transition:.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  font-size:18px;
+  border:1px solid rgba(255,255,255,0.2);
+}
+
+.back-button:hover{
+  background:rgba(255,255,255,.25);
+  transform:scale(1.1);
+  box-shadow:0 0 20px rgba(255,255,255,0.2);
+}
+
+/* ================= MODAL CONTENT ================= */
+.modal-content{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+  padding:0 20px 90px;
+}
+
+/* ================= RING CONTAINER ================= */
+.ring-container {
+  position:relative;
+  width:220px;
+  height:220px;
+  margin:15px auto;
+  flex-shrink:0;
+}
+
+.ring{
+  width:100%;
+  height:100%;
+  border-radius:50%;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  position:relative;
+}
+
+.ring-bg{
+  position:absolute;
+  width:100%;
+  height:100%;
+  border-radius:50%;
+  background:rgba(255,255,255,0.05);
+  border:2px solid rgba(255,255,255,0.1);
+  box-shadow:inset 0 0 50px rgba(0,0,0,0.3),
+             0 0 30px rgba(0,0,0,0.2);
+}
+
+.ring-progress{
+  position:absolute;
+  width:100%;
+  height:100%;
+  border-radius:50%;
+  clip-path:inset(0 0 0 50%);
+}
+
+.ring-progress-fill{
+  width:100%;
+  height:100%;
+  border-radius:50%;
+  transform:rotate(0deg);
+  transition:transform 1.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+  filter:drop-shadow(0 0 10px currentColor);
+}
+
+.ring-pulse {
+  position:absolute;
+  width:calc(100% + 50px);
+  height:calc(100% + 50px);
+  border-radius:50%;
+  top:-25px;
+  left:-25px;
+  opacity:0.3;
+  animation:pulseGlow 4s infinite alternate;
+}
+
+.center{
+  position:relative;
+  z-index:3;
+  width:140px;
+  height:140px;
+  border-radius:50%;
+  background:rgba(0,0,0,0.5);
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  transition:all 0.3s;
+  border:2px solid rgba(255,255,255,0.1);
+  box-shadow:inset 0 0 30px rgba(0,0,0,0.4),
+             0 0 30px rgba(0,0,0,0.3);
+  backdrop-filter:blur(10px);
+}
+.center h1{
+  font-size:34px;
+  margin-bottom:4px;
+  background:linear-gradient(90deg, #fff, rgba(255,255,255,0.9));
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.center span{
+  font-size:12px;
+  opacity:.8;
+  letter-spacing:1px;
+}
+
+/* Activity-specific animations */
+.running-animation {
+  animation:runAnimation 0.8s ease-in-out infinite alternate;
+}
+
+@keyframes runAnimation {
+  0%{transform:translateX(-8px) rotate(-8deg);}
+  100%{transform:translateX(8px) rotate(8deg);}
+}
+
+.heartbeat-animation {
+  animation:heartbeat 1.2s ease-in-out infinite;
+}
+
+@keyframes heartbeat {
+  0%{transform:scale(1);}
+  25%{transform:scale(1.15);}
+  50%{transform:scale(1);}
+  75%{transform:scale(1.1);}
+  100%{transform:scale(1);}
+}
+
+.flame-animation {
+  animation:flame 0.5s ease-in-out infinite alternate;
+}
+
+@keyframes flame {
+  0%{transform:scaleY(0.9) translateY(4px);}
+  100%{transform:scaleY(1.15) translateY(-4px);}
+}
+
+.sleep-animation {
+  animation:zzz 3s ease-in-out infinite;
+}
+
+@keyframes zzz {
+  0%,100%{opacity:0.7; transform:translateY(0);}
+  50%{opacity:1; transform:translateY(-3px);}
+}
+
+/* ================= BARS ================= */
+.bars{
+  margin-top:15px;
+  margin-bottom:15px;
+  flex-shrink:0;
+}
+.bar-container{
+  margin-bottom:14px;
+}
+.bar-label{
+  display:flex;
+  justify-content:space-between;
+  margin-bottom:6px;
+  font-size:12px;
+}
+.bar-label span:first-child{opacity:.9; font-weight:500;}
+.bar-label span:last-child{opacity:.7;}
+
+.bar{
+  height:12px;
+  border-radius:10px;
+  background:rgba(255,255,255,0.08);
+  overflow:hidden;
+  position:relative;
+  transition:all 0.3s;
+  border:1px solid rgba(255,255,255,0.1);
+}
+.fill{
+  height:100%;
+  width:0%;
+  border-radius:10px;
+  position:relative;
+  transition:width 1.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow:inset 0 0 8px rgba(255,255,255,0.3);
+}
+.fill::after{
+  content:"";
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  bottom:0;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.5),transparent);
+  animation:shimmer 3s infinite;
+}
+
+@keyframes shimmer{
+  0%{transform:translateX(-100%);}
+  100%{transform:translateX(100%);}
+}
+
+/* ================= STATS ================= */
+.stats{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+  margin-top:15px;
+  margin-bottom:15px;
+  flex-shrink:0;
+}
+.stat-card{
+  background:rgba(255,255,255,0.07);
+  border-radius:14px;
+  padding:12px;
+  text-align:center;
+  transition:all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  border:1px solid rgba(255,255,255,0.1);
+  box-shadow:0 8px 32px rgba(0,0,0,0.1);
+}
+.stat-card:hover{
+  transform:translateY(-5px);
+  background:rgba(255,255,255,0.12);
+  box-shadow:0 12px 40px rgba(0,0,0,0.2);
+}
+.stat-value{
+  font-size:18px;
+  font-weight:600;
+  margin-bottom:4px;
+  background:linear-gradient(90deg, #fff, rgba(255,255,255,0.9));
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.stat-label{
+  font-size:10px;
+  opacity:.8;
+  letter-spacing:0.5px;
+}
+
+/* ================= MODAL FOOTER ================= */
+.modal-footer{
+  position:absolute;
+  bottom:25px;
+  left:0;
+  width:100%;
+  display:flex;
+  justify-content:center;
+  z-index:6;
+  padding:0 20px;
+  box-sizing:border-box;
+}
+
+.modal-footer button{
+  padding:14px 32px;
+  border:none;
+  border-radius:28px;
+  font-weight:500;
+  cursor:pointer;
+  transition:all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  position:relative;
+  overflow:hidden;
+  font-size:14px;
+  letter-spacing:0.5px;
+  background:linear-gradient(135deg, var(--btn-c1), var(--btn-c2));
+  box-shadow:0 10px 30px rgba(0,0,0,0.3),
+             0 0 20px var(--btn-c2, rgba(0,0,0,0.2));
+  border:2px solid rgba(255,255,255,0.2);
+  width:100%;
+  max-width:300px;
+}
+
+.modal-footer button:hover{
+  transform:translateY(-5px) scale(1.05);
+  box-shadow:0 20px 40px rgba(0,0,0,0.4),
+             0 0 30px var(--btn-c2, rgba(0,0,0,0.3));
+}
+
+.modal-footer button:active{
+  transform:translateY(0) scale(0.98);
+}
+
+.modal-footer button::after{
+  content:"";
+  position:absolute;
+  top:0;
+  left:-100%;
+  width:100%;
+  height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.3),transparent);
+  transition:0.6s;
+}
+
+.modal-footer button:hover::after{
+  left:100%;
+}
+</style>
+</head>
+
+<body>
+
+<div class="frame" id="frame">
+  <div class="neon-grid"></div>
+  
+  <!-- Theme Toggle -->
+  <div class="theme-toggle" id="themeToggle">
+    🌈
+  </div>
+
+  <div class="ambient home" id="amb1"></div>
+  <div class="ambient home2" id="amb2"></div>
+
+  <div class="header">
+    <h2>Today</h2>
+    <span>Your body in motion</span>
+  </div>
+
+  <div class="list">
+    <div class="card" style="--i:1;--c1:#00f2fe;--c2:#4facfe" onclick="openAct('Steps')">
+      <div class="icon">🚶</div><div><h4>Steps</h4><p>Daily movement</p></div>
+    </div>
+    <div class="card" style="--i:2;--c1:#00ff85;--c2:#00c853" onclick="openAct('Running')">
+      <div class="icon">🏃</div><div><h4>Running</h4><p>Pace & distance</p></div>
+    </div>
+    <div class="card" style="--i:3;--c1:#ffb347;--c2:#ff8c00" onclick="openAct('Calories')">
+      <div class="icon">🔥</div><div><h4>Calories</h4><p>Burn rate</p></div>
+    </div>
+    <div class="card" style="--i:4;--c1:#ff4d6d;--c2:#ff1744" onclick="openAct('Heart')">
+      <div class="icon">❤️</div><div><h4>Heart</h4><p>BPM live</p></div>
+    </div>
+    <div class="card" style="--i:5;--c1:#7f7cff;--c2:#4f46e5" onclick="openAct('Sleep')">
+      <div class="icon">😴</div><div><h4>Sleep</h4><p>Recovery</p></div>
+    </div>
+  </div>
+
+  <!-- MODAL -->
+  <div class="modal" id="modal">
+    <div class="modalHeader">
+      <div class="back-button" onclick="closeAct()">
+        ←
+      </div>
+      <h3 id="title">Activity</h3>
+      <div style="width:36px;"></div>
+    </div>
+
+    <div class="modal-content">
+      <div class="ring-container">
+        <div class="ring-pulse" id="ringPulse"></div>
+        <div class="ring-bg"></div>
+        <div class="ring-progress">
+          <div class="ring-progress-fill" id="ringProgressFill"></div>
+        </div>
+        <div class="ring">
+          <div class="center">
+            <h1 id="val">0</h1>
+            <span id="unit">units</span>
+            <div id="activityIcon" style="font-size:24px;margin-top:8px;"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="stats" id="stats"></div>
+      <div class="bars" id="bars"></div>
+    </div>
+
+    <div class="modal-footer">
+      <button id="btn" style="--btn-c1:#00f2fe;--btn-c2:#4facfe">Start Tracking</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const modal = document.getElementById("modal");
+const ringProgressFill = document.getElementById("ringProgressFill");
+const ringPulse = document.getElementById("ringPulse");
+const val = document.getElementById("val");
+const unit = document.getElementById("unit");
+const title = document.getElementById("title");
+const btn = document.getElementById("btn");
+const statsContainer = document.getElementById("stats");
+const barsContainer = document.getElementById("bars");
+const activityIcon = document.getElementById("activityIcon");
+const frame = document.getElementById("frame");
+const themeToggle = document.getElementById("themeToggle");
+const amb1 = document.getElementById("amb1");
+const amb2 = document.getElementById("amb2");
+const neonGrid = document.querySelector('.neon-grid');
+
+let timer;
+let currentActivity = '';
+let currentProgress = 0;
+let currentThemeIndex = 0;
+
+// 10 Vibrant, Glowing, Animated Themes
+const themes = [
+  {
+    name: "Cyber Neon",
+    frameBg: "linear-gradient(135deg, #0f0c29, #302b63, #24243e)",
+    ambient1: "radial-gradient(circle, #ff00ff, #ff0066, transparent 70%)",
+    ambient2: "radial-gradient(circle, #00ffff, #0088ff, transparent 70%)",
+    gridColor: "rgba(255,0,255,0.1)",
+    textColor: "#ffffff",
+    modalBg: "linear-gradient(135deg, #0f0c29, #302b63, #24243e)",
+    ringBg: "rgba(255,255,255,0.08)",
+    centerBg: "rgba(0,0,0,0.4)",
+    statCard: "rgba(255,255,255,0.1)",
+    barBg: "rgba(255,255,255,0.12)",
+    bodyBg: "#050510",
+    toggleIcon: "🌌"
+  },
+  {
+    name: "Sunset Fire",
+    frameBg: "linear-gradient(135deg, #ff416c, #ff4b2b, #ff9500)",
+    ambient1: "radial-gradient(circle, #ff9500, #ff4b2b, transparent 70%)",
+    ambient2: "radial-gradient(circle, #ff416c, #ff0066, transparent 70%)",
+    gridColor: "rgba(255,149,0,0.15)",
+    textColor: "#ffffff",
+    modalBg: "linear-gradient(135deg, #ff416c, #ff4b2b, #ff9500)",
+    ringBg: "rgba(255,255,255,0.15)",
+    centerBg: "rgba(0,0,0,0.3)",
+    statCard: "rgba(255,255,255,0.12)",
+    barBg: "rgba(255,255,255,0.18)",
+    bodyBg: "#330000",
+    toggleIcon: "🔥"
+  },
+  {
+    name: "Ocean Depth",
+    frameBg: "linear-gradient(135deg, #0052D4, #4364F7, #6FB1FC)",
+    ambient1: "radial-gradient(circle, #00b4db, #0083b0, transparent 70%)",
+    ambient2: "radial-gradient(circle, #6FB1FC, #4364F7, transparent 70%)",
+    gridColor: "rgba(0,180,219,0.1)",
+    textColor: "#ffffff",
+    modalBg: "linear-gradient(135deg, #0052D4, #4364F7, #6FB1FC)",
+    ringBg: "rgba(255,255,255,0.1)",
+    centerBg: "rgba(0,0,0,0.4)",
+    statCard: "rgba(255,255,255,0.1)",
+    barBg: "rgba(255,255,255,0.15)",
+    bodyBg: "#001a33",
+    toggleIcon: "🌊"
+  },
+  {
+    name: "Forest Glow",
+    frameBg: "linear-gradient(135deg, #134E5E, #71B280)",
+    ambient1: "radial-gradient(circle, #00b09b, #96c93d, transparent 70%)",
+    ambient2: "radial-gradient(circle, #134E5E, #71B280, transparent 70%)",
+    gridColor: "rgba(0,176,155,0.1)",
+    textColor: "#ffffff",
+    modalBg: "linear-gradient(135deg, #134E5E, #71B280)",
+    ringBg: "rgba(255,255,255,0.08)",
+    centerBg: "rgba(0,0,0,0.4)",
+    statCard: "rgba(255,255,255,0.09)",
+    barBg: "rgba(255,255,255,0.12)",
+    bodyBg: "#001a1a",
+    toggleIcon: "🌿"
+  },
+  {
+    name: "Galaxy Purple",
+    frameBg: "linear-gradient(135deg, #654ea3, #da98b4, #eaa667)",
+    ambient1: "radial-gradient(circle, #da98b4, #654ea3, transparent 70%)",
+    ambient2: "radial-gradient(circle, #eaa667, #da98b4, transparent 70%)",
+    gridColor: "rgba(218,152,180,0.15)",
+    textColor: "#ffffff",
+    modalBg: "linear-gradient(135deg, #654ea3, #da98b4, #eaa667)",
+    ringBg: "rgba(255,255,255,0.12)",
+    centerBg: "rgba(0,0,0,0.35)",
+    statCard: "rgba(255,255,255,0.11)",
+    barBg: "rgba(255,255,255,0.16)",
+    bodyBg: "#2d1b48",
+    toggleIcon: "✨"
+  },
+  {
+    name: "Electric Blue",
+    frameBg: "linear-gradient(135deg, #00c6ff, #0072ff)",
+    ambient1: "radial-gradient(circle, #00c6ff, #0072ff, transparent 70%)",
+    ambient2: "radial-gradient(circle, #667eea, #764ba2, transparent 70%)",
+    gridColor: "rgba(0,198,255,0.15)",
+    textColor: "#ffffff",
+    modalBg: "linear-gradient(135deg, #00c6ff, #0072ff)",
+    ringBg: "rgba(255,255,255,0.1)",
+    centerBg: "rgba(0,0,0,0.4)",
+    statCard: "rgba(255,255,255,0.1)",
+    barBg: "rgba(255,255,255,0.15)",
+    bodyBg: "#000a33",
+    toggleIcon: "⚡"
+  },
+  {
+    name: "Crimson Passion",
+    frameBg: "linear-gradient(135deg, #FF416C, #FF4B2B, #FF0000)",
+    ambient1: "radial-gradient(circle, #FF416C, #FF0000, transparent 70%)",
+    ambient2: "radial-gradient(circle, #FF4B2B, #FF416C, transparent 70%)",
+    gridColor: "rgba(255,65,108,0.15)",
+    textColor: "#ffffff",
+    modalBg: "linear-gradient(135deg, #FF416C, #FF4B2B, #FF0000)",
+    ringBg: "rgba(255,255,255,0.12)",
+    centerBg: "rgba(0,0,0,0.35)",
+    statCard: "rgba(255,255,255,0.11)",
+    barBg: "rgba(255,255,255,0.17)",
+    bodyBg: "#330000",
+    toggleIcon: "❤️"
+  },
+  {
+    name: "Emerald Jungle",
+    frameBg: "linear-gradient(135deg, #00b09b, #96c93d)",
+    ambient1: "radial-gradient(circle, #96c93d, #00b09b, transparent 70%)",
+    ambient2: "radial-gradient(circle, #00b09b, #008080, transparent 70%)",
+    gridColor: "rgba(150,201,61,0.15)",
+    textColor: "#ffffff",
+    modalBg: "linear-gradient(135deg, #00b09b, #96c93d)",
+    ringBg: "rgba(255,255,255,0.09)",
+    centerBg: "rgba(0,0,0,0.4)",
+    statCard: "rgba(255,255,255,0.09)",
+    barBg: "rgba(255,255,255,0.13)",
+    bodyBg: "#003333",
+    toggleIcon: "🌴"
+  },
+  {
+    name: "Golden Hour",
+    frameBg: "linear-gradient(135deg, #FF8008, #FFC837)",
+    ambient1: "radial-gradient(circle, #FFC837, #FF8008, transparent 70%)",
+    ambient2: "radial-gradient(circle, #FF8008, #FF4500, transparent 70%)",
+    gridColor: "rgba(255,200,55,0.15)",
+    textColor: "#ffffff",
+    modalBg: "linear-gradient(135deg, #FF8008, #FFC837)",
+    ringBg: "rgba(255,255,255,0.11)",
+    centerBg: "rgba(0,0,0,0.35)",
+    statCard: "rgba(255,255,255,0.1)",
+    barBg: "rgba(255,255,255,0.16)",
+    bodyBg: "#332200",
+    toggleIcon: "🌟"
+  },
+  {
+    name: "Violet Dream",
+    frameBg: "linear-gradient(135deg, #7F00FF, #E100FF)",
+    ambient1: "radial-gradient(circle, #E100FF, #7F00FF, transparent 70%)",
+    ambient2: "radial-gradient(circle, #7F00FF, #4B0082, transparent 70%)",
+    gridColor: "rgba(225,0,255,0.15)",
+    textColor: "#ffffff",
+    modalBg: "linear-gradient(135deg, #7F00FF, #E100FF)",
+    ringBg: "rgba(255,255,255,0.1)",
+    centerBg: "rgba(0,0,0,0.4)",
+    statCard: "rgba(255,255,255,0.1)",
+    barBg: "rgba(255,255,255,0.15)",
+    bodyBg: "#1a0033",
+    toggleIcon: "💜"
+  }
+];
+
+// Activity data
+const activityData = {
+  Steps: {
+    colors: ["#00f2fe", "#4facfe"],
+    unit: "steps",
+    icon: "🚶",
+    maxValue: 10000,
+    stats: [
+      { label: "Daily Goal", value: "10,000" },
+      { label: "Distance", value: "7.2 km" },
+      { label: "Active Min", value: "85" }
+    ],
+    bars: [
+      { label: "Morning", value: 65, sublabel: "3,200 steps" },
+      { label: "Afternoon", value: 85, sublabel: "4,100 steps" },
+      { label: "Evening", value: 45, sublabel: "2,700 steps" }
+    ],
+    animation: null
+  },
+  Running: {
+    colors: ["#00ff85", "#00c853"],
+    unit: "km",
+    icon: "🏃",
+    maxValue: 15,
+    stats: [
+      { label: "Pace", value: "5'30\"" },
+      { label: "Time", value: "42:15" },
+      { label: "Avg HR", value: "148" }
+    ],
+    bars: [
+      { label: "Warm-up", value: 30, sublabel: "0-5 min" },
+      { label: "Peak", value: 85, sublabel: "15-30 min" },
+      { label: "Cool-down", value: 40, sublabel: "35-42 min" }
+    ],
+    animation: "running-animation"
+  },
+  Calories: {
+    colors: ["#ffb347", "#ff8c00"],
+    unit: "kcal",
+    icon: "🔥",
+    maxValue: 2400,
+    stats: [
+      { label: "Burned", value: "1,850" },
+      { label: "Intake", value: "1,950" },
+      { label: "Net", value: "+100" }
+    ],
+    bars: [
+      { label: "Walking", value: 35, sublabel: "450 kcal" },
+      { label: "Running", value: 75, sublabel: "980 kcal" },
+      { label: "Strength", value: 55, sublabel: "420 kcal" }
+    ],
+    animation: "flame-animation"
+  },
+  Heart: {
+    colors: ["#ff4d6d", "#ff1744"],
+    unit: "BPM",
+    icon: "❤️",
+    maxValue: 180,
+    stats: [
+      { label: "Resting", value: "68" },
+      { label: "Max", value: "162" },
+      { label: "Recovery", value: "32" }
+    ],
+    bars: [
+      { label: "Rest", value: 40, sublabel: "60-75 BPM" },
+      { label: "Exercise", value: 90, sublabel: "140-162 BPM" },
+      { label: "Recovery", value: 60, sublabel: "95-110 BPM" }
+    ],
+    animation: "heartbeat-animation"
+  },
+  Sleep: {
+    colors: ["#7f7cff", "#4f46e5"],
+    unit: "hrs",
+    icon: "😴",
+    maxValue: 10,
+    stats: [
+      { label: "Deep", value: "2.5h" },
+      { label: "REM", value: "1.8h" },
+      { label: "Light", value: "4.2h" }
+    ],
+    bars: [
+      { label: "Deep Sleep", value: 50, sublabel: "2h 30m" },
+      { label: "REM Sleep", value: 35, sublabel: "1h 48m" },
+      { label: "Light Sleep", value: 85, sublabel: "4h 12m" }
+    ],
+    animation: "sleep-animation"
+  }
+};
+
+// Theme cycling functionality
+themeToggle.addEventListener('click', () => {
+  currentThemeIndex = (currentThemeIndex + 1) % themes.length;
+  applyTheme(currentThemeIndex);
+  
+  // Animate the toggle
+  themeToggle.style.transform = 'rotate(720deg) scale(1.2)';
+  setTimeout(() => {
+    themeToggle.style.transform = 'rotate(360deg) scale(1)';
+  }, 500);
+});
+
+function applyTheme(index) {
+  const theme = themes[index];
+  
+  // Update frame with animation
+  frame.style.background = theme.frameBg;
+  
+  // Update ambient lights with glow
+  amb1.style.background = theme.ambient1;
+  amb2.style.background = theme.ambient2;
+  
+  // Update neon grid
+  neonGrid.style.background = `
+    linear-gradient(90deg, ${theme.gridColor} 1px, transparent 1px),
+    linear-gradient(${theme.gridColor} 1px, transparent 1px)
+  `;
+  
+  // Update toggle icon
+  themeToggle.textContent = theme.toggleIcon;
+  
+  // Update text color
+  frame.style.color = theme.textColor;
+  
+  // Update modal background if open
+  if (modal.classList.contains('active')) {
+    modal.style.background = theme.modalBg;
+  }
+  
+  // Update all UI elements
+  document.querySelectorAll('.ring-bg').forEach(el => {
+    el.style.background = theme.ringBg;
+  });
+  
+  document.querySelectorAll('.center').forEach(el => {
+    el.style.background = theme.centerBg;
+  });
+  
+  document.querySelectorAll('.stat-card').forEach(el => {
+    el.style.background = theme.statCard;
+  });
+  
+  document.querySelectorAll('.bar').forEach(el => {
+    el.style.background = theme.barBg;
+  });
+  
+  document.body.style.background = theme.bodyBg;
+  
+  // Animate the change
+  frame.style.transform = 'scale(0.98)';
+  setTimeout(() => {
+    frame.style.transform = 'scale(1)';
+  }, 300);
+}
+
+function openAct(activity) {
+  currentActivity = activity;
+  const data = activityData[activity];
+  const [c1, c2] = data.colors;
+  
+  title.textContent = activity;
+  unit.textContent = data.unit;
+  activityIcon.textContent = data.icon;
+  activityIcon.style.color = c1;
+  
+  // Set colors with glow effects
+  ringProgressFill.style.background = `linear-gradient(135deg, ${c1}, ${c2})`;
+  ringPulse.style.background = `radial-gradient(circle, ${c1}, ${c2}, transparent 70%)`;
+  btn.style.setProperty('--btn-c1', c1);
+  btn.style.setProperty('--btn-c2', c2);
+  
+  // Reset and set initial values
+  resetProgress();
+  updateDisplay(0);
+  
+  // Create stats
+  createStats(data.stats);
+  
+  // Create bars
+  createBars(data.bars, c1, c2);
+  
+  // Apply specific animation
+  if (data.animation) {
+    activityIcon.classList.add(data.animation);
+  }
+  
+  // Show pulse animation for heart activity
+  if (activity === 'Heart') {
+    ringPulse.classList.add('pulse-animation');
+  } else {
+    ringPulse.classList.remove('pulse-animation');
+  }
+  
+  // Show modal
+  modal.classList.add("active");
+}
+
+function closeAct() {
+  modal.classList.remove("active");
+  clearInterval(timer);
+  activityIcon.className = '';
+  ringPulse.classList.remove('pulse-animation');
+  btn.textContent = 'Start Tracking';
+  btn.style.animation = '';
+}
+
+function resetProgress() {
+  currentProgress = 0;
+  ringProgressFill.style.transform = `rotate(0deg)`;
+}
+
+function updateDisplay(progress) {
+  const data = activityData[currentActivity];
+  const angle = (progress / 100) * 360;
+  ringProgressFill.style.transform = `rotate(${angle}deg)`;
+  
+  // Calculate actual value based on max
+  const actualValue = Math.floor((progress / 100) * data.maxValue);
+  
+  // Format value based on activity
+  if (currentActivity === 'Steps') {
+    val.textContent = actualValue.toLocaleString();
+  } else if (currentActivity === 'Calories') {
+    val.textContent = actualValue.toLocaleString();
+  } else if (currentActivity === 'Running') {
+    val.textContent = (actualValue / 10).toFixed(1);
+  } else if (currentActivity === 'Sleep') {
+    val.textContent = (actualValue / 10).toFixed(1);
+  } else {
+    val.textContent = actualValue;
+  }
+}
+
+function createStats(stats) {
+  statsContainer.innerHTML = '';
+  stats.forEach(stat => {
+    const statEl = document.createElement('div');
+    statEl.className = 'stat-card';
+    statEl.innerHTML = `
+      <div class="stat-value">${stat.value}</div>
+      <div class="stat-label">${stat.label}</div>
+    `;
+    statsContainer.appendChild(statEl);
+  });
+}
+
+function createBars(bars, c1, c2) {
+  barsContainer.innerHTML = '';
+  bars.forEach((bar, index) => {
+    const barEl = document.createElement('div');
+    barEl.className = 'bar-container';
+    barEl.innerHTML = `
+      <div class="bar-label">
+        <span>${bar.label}</span>
+        <span>${bar.sublabel}</span>
+      </div>
+      <div class="bar">
+        <div class="fill" id="bar${index}" style="background: linear-gradient(90deg, ${c1}, ${c2})"></div>
+      </div>
+    `;
+    barsContainer.appendChild(barEl);
+    
+    // Animate bar fill after a short delay
+    setTimeout(() => {
+      const fill = document.getElementById(`bar${index}`);
+      fill.style.width = `${bar.value}%`;
+      fill.style.boxShadow = `inset 0 0 8px rgba(255,255,255,0.3), 0 0 15px ${c2}`;
+    }, 300 + (index * 200));
+  });
+}
+
+btn.onclick = () => {
+  if (btn.textContent === 'Start Tracking') {
+    btn.textContent = 'Stop Tracking';
+    startTracking();
+  } else {
+    btn.textContent = 'Start Tracking';
+    clearInterval(timer);
+    btn.style.animation = '';
+  }
+};
+
+function startTracking() {
+  clearInterval(timer);
+  currentProgress = 0;
+  
+  timer = setInterval(() => {
+    if (currentProgress >= 100) {
+      clearInterval(timer);
+      btn.textContent = 'Completed!';
+      
+      // Add completion animation
+      btn.style.animation = 'pulseGlow 1s infinite alternate';
+      return;
+    }
+    
+    // Different speed for different activities
+    let increment;
+    switch(currentActivity) {
+      case 'Heart': increment = 2.5; break;
+      case 'Running': increment = 1.8; break;
+      case 'Steps': increment = 1.2; break;
+      case 'Calories': increment = 1.5; break;
+      case 'Sleep': increment = 0.8; break;
+      default: increment = 2;
+    }
+    
+    currentProgress = Math.min(100, currentProgress + increment);
+    updateDisplay(currentProgress);
+    
+    // Simulate real-time updates for stats (heart rate example)
+    if (currentActivity === 'Heart' && currentProgress > 20 && currentProgress < 80) {
+      const heartRate = 68 + Math.floor(currentProgress * 0.9);
+      document.querySelector('.stat-card:nth-child(2) .stat-value').textContent = heartRate;
+    }
+    
+    // Add pulsing effect to ring when tracking
+    if (currentProgress % 10 === 0) {
+      ringPulse.style.opacity = '0.5';
+      setTimeout(() => {
+        ringPulse.style.opacity = '0.3';
+      }, 100);
+    }
+  }, 100);
+}
+
+// Initialize with first theme
+applyTheme(0);
+</script>
+
+</body>
+</html>
