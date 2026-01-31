@@ -1,0 +1,1557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>NeoMarket — Live Analytical Finance UI</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Poppins,sans-serif}
+
+body{
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:#05060a;
+  overflow:hidden;
+  position:relative;
+  transition:background 0.5s ease;
+}
+
+/* Theme Toggle Button */
+.theme-toggle {
+  position:absolute;
+  top:20px;
+  right:20px;
+  width:40px;
+  height:40px;
+  background:rgba(255,255,255,0.1);
+  border-radius:12px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  z-index:100;
+  border:1px solid rgba(255,255,255,0.2);
+  backdrop-filter:blur(10px);
+  transition:all 0.3s;
+  box-shadow:0 4px 15px rgba(0,0,0,0.2);
+}
+
+.theme-toggle:hover {
+  transform:scale(1.1);
+  background:rgba(255,255,255,0.15);
+  box-shadow:0 6px 20px rgba(0,0,0,0.3);
+}
+
+.theme-toggle i {
+  font-size:18px;
+  color:#fff;
+  transition:transform 0.3s;
+}
+
+.theme-toggle:hover i {
+  transform:rotate(180deg);
+}
+
+/* Enhanced Ambient background with dynamic glow */
+.ambient-light {
+  position:absolute;
+  border-radius:50%;
+  filter:blur(120px);
+  opacity:0.4;
+  z-index:1;
+  transition:all 0.8s ease;
+}
+
+.ambient-cyan {
+  width:500px;
+  height:500px;
+  top:-150px;
+  left:-150px;
+  animation:float-cyan 15s ease-in-out infinite alternate;
+}
+
+.ambient-purple {
+  width:600px;
+  height:600px;
+  bottom:-200px;
+  right:-200px;
+  animation:float-purple 18s ease-in-out infinite alternate-reverse;
+}
+
+.ambient-pink {
+  width:400px;
+  height:400px;
+  top:50%;
+  left:50%;
+  transform:translate(-50%, -50%);
+  animation:pulse-glow 8s ease-in-out infinite;
+}
+
+@keyframes float-cyan {
+  0% { transform:translate(-100px, -50px) scale(1); }
+  50% { transform:translate(50px, 100px) scale(1.1); }
+  100% { transform:translate(-150px, 80px) scale(1); }
+}
+
+@keyframes float-purple {
+  0% { transform:translate(100px, 80px) scale(1); }
+  50% { transform:translate(-80px, -100px) scale(1.2); }
+  100% { transform:translate(150px, -50px) scale(1); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { opacity:0.3; transform:translate(-50%, -50%) scale(1); }
+  50% { opacity:0.6; transform:translate(-50%, -50%) scale(1.3); }
+}
+
+/* Animated background particles */
+.particles {
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  z-index:0;
+}
+
+.particle {
+  position:absolute;
+  width:2px;
+  height:2px;
+  border-radius:50%;
+  animation:float-particle linear infinite;
+}
+
+@keyframes float-particle {
+  0% {
+    transform:translateY(100vh) translateX(0);
+    opacity:0;
+  }
+  10% {
+    opacity:0.5;
+  }
+  90% {
+    opacity:0.5;
+  }
+  100% {
+    transform:translateY(-100px) translateX(var(--tx, 0));
+    opacity:0;
+  }
+}
+
+/* Enhanced Frame with glowing effect */
+.frame{
+  width:360px;
+  height:640px;
+  border-radius:30px;
+  padding:22px;
+  background:rgba(255,255,255,0.07);
+  backdrop-filter:blur(25px);
+  color:#fff;
+  position:relative;
+  z-index:2;
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,0.15);
+  box-shadow:
+    0 8px 32px rgba(0,0,0,0.3),
+    0 0 0 1px rgba(255,255,255,0.05),
+    inset 0 1px 0 rgba(255,255,255,0.1);
+  animation:frame-glow 4s ease-in-out infinite alternate;
+  transition:all 0.5s ease;
+}
+
+@keyframes frame-glow {
+  0% {
+    box-shadow:
+      0 8px 32px rgba(0,0,0,0.3),
+      0 0 0 1px rgba(255,255,255,0.05),
+      inset 0 1px 0 rgba(255,255,255,0.1);
+  }
+  100% {
+    box-shadow:
+      0 8px 32px rgba(0,0,0,0.3),
+      0 0 0 1px rgba(255,255,255,0.05),
+      inset 0 1px 0 rgba(255,255,255,0.1);
+  }
+}
+
+/* Inner glow effect */
+.frame::before {
+  content:'';
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  bottom:0;
+  border-radius:30px;
+  background:linear-gradient(135deg, 
+    rgba(0,242,254,0.1) 0%,
+    rgba(127,0,255,0.1) 100%);
+  z-index:-1;
+  opacity:0.5;
+  animation:inner-glow 6s ease-in-out infinite alternate;
+  transition:all 0.5s ease;
+}
+
+@keyframes inner-glow {
+  0% { opacity:0.3; }
+  100% { opacity:0.7; }
+}
+
+/* Header */
+.header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:5px;
+  position:relative;
+}
+.header h3{
+  font-weight:500;
+  color:#fff;
+  text-shadow:0 0 20px currentColor;
+  animation:text-glow 3s ease-in-out infinite alternate;
+  transition:all 0.5s ease;
+}
+
+@keyframes text-glow {
+  0% { text-shadow:0 0 20px currentColor; }
+  100% { text-shadow:0 0 30px currentColor; }
+}
+
+.live-indicator{
+  display:flex;
+  align-items:center;
+  font-size:11px;
+  padding:4px 10px;
+  border-radius:12px;
+  animation:pulse 2s infinite;
+  border:1px solid;
+  box-shadow:0 0 15px currentColor;
+  transition:all 0.5s ease;
+}
+.live-dot{
+  width:6px;
+  height:6px;
+  border-radius:50%;
+  margin-right:6px;
+  animation:blink 1s infinite;
+  box-shadow:0 0 10px currentColor;
+  transition:all 0.5s ease;
+}
+
+@keyframes pulse{
+  0%,100%{ 
+    box-shadow:0 0 15px currentColor;
+    transform:scale(1);
+  }
+  50%{
+    box-shadow:0 0 25px currentColor;
+    transform:scale(1.05);
+  }
+}
+@keyframes blink{
+  0%,100%{ 
+    opacity:1;
+    box-shadow:0 0 10px currentColor;
+  }
+  50%{
+    opacity:0.3;
+    box-shadow:0 0 5px currentColor;
+  }
+}
+
+/* Tabs with glow effect */
+.tabs{
+  display:flex;
+  background:rgba(255,255,255,0.08);
+  border-radius:18px;
+  padding:6px;
+  margin:12px 0;
+  border:1px solid rgba(255,255,255,0.15);
+  backdrop-filter:blur(10px);
+  box-shadow:0 4px 20px rgba(0,0,0,0.2);
+  transition:all 0.5s ease;
+}
+.tab{
+  flex:1;
+  text-align:center;
+  padding:10px;
+  font-size:13px;
+  cursor:pointer;
+  opacity:.6;
+  border-radius:14px;
+  transition:.4s;
+  background:transparent;
+  position:relative;
+  overflow:hidden;
+}
+.tab::before {
+  content:'';
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  bottom:0;
+  border-radius:14px;
+  opacity:0;
+  transition:opacity 0.4s;
+}
+.tab.active{
+  opacity:1;
+  border:1px solid;
+  transition:all 0.5s ease;
+}
+.tab.active::before {
+  opacity:1;
+}
+.tab span {
+  position:relative;
+  z-index:1;
+  color:#fff;
+}
+
+/* List with enhanced glassmorphism and glow */
+.item{
+  padding:14px;
+  border-radius:18px;
+  margin-bottom:10px;
+  background:rgba(255,255,255,0.05);
+  cursor:pointer;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  border:1px solid rgba(255,255,255,0.1);
+  backdrop-filter:blur(10px);
+  transition:all 0.3s ease;
+  position:relative;
+  overflow:hidden;
+  box-shadow:0 4px 15px rgba(0,0,0,0.1);
+}
+.item::before{
+  content:"";
+  position:absolute;
+  top:0;
+  left:-100%;
+  width:100%;
+  height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.1),transparent);
+  transition:0.5s;
+}
+.item:hover::before{
+  left:100%;
+}
+.item:hover{
+  transform:translateY(-2px);
+  background:rgba(255,255,255,0.08);
+  border-color:currentColor;
+  box-shadow:0 6px 25px currentColor;
+}
+.item-content{flex:1}
+.item h4{
+  font-size:14px;
+  margin-bottom:4px;
+  font-weight:500;
+  color:#fff;
+  transition:all 0.5s ease;
+}
+.item span{
+  font-size:11px;
+  opacity:.7;
+  display:block;
+  color:rgba(255,255,255,0.7);
+}
+
+/* Mini Graph with glow */
+.mini-graph{
+  width:60px;
+  height:24px;
+  margin-left:10px;
+  position:relative;
+  filter:drop-shadow(0 0 5px currentColor);
+}
+.mini-graph svg{
+  width:100%;
+  height:100%;
+}
+
+/* Performance indicator */
+.perf-indicator{
+  text-align:right;
+  margin-left:12px;
+  min-width:70px;
+}
+.perf-rupee{
+  font-size:13px;
+  font-weight:600;
+  margin-bottom:2px;
+  transition:all 0.5s ease;
+  text-shadow:0 0 10px currentColor;
+}
+.perf-percent{
+  font-size:11px;
+  font-weight:500;
+  transition:all 0.5s ease;
+  text-shadow:0 0 8px currentColor;
+}
+
+/* Color classes for performance with glow */
+.positive-rupee{
+  animation:positive-glow 2s infinite alternate;
+}
+.positive-percent{
+  animation:positive-glow 2s infinite alternate;
+}
+.negative-rupee{
+  animation:negative-glow 2s infinite alternate;
+}
+.negative-percent{
+  animation:negative-glow 2s infinite alternate;
+}
+
+@keyframes positive-glow {
+  0% { text-shadow:0 0 5px currentColor; }
+  100% { text-shadow:0 0 15px currentColor; }
+}
+
+@keyframes negative-glow {
+  0% { text-shadow:0 0 5px currentColor; }
+  100% { text-shadow:0 0 15px currentColor; }
+}
+
+/* Current price */
+.current-price{
+  font-size:12px;
+  opacity:0.9;
+  margin-top:2px;
+  font-weight:500;
+  color:rgba(255,255,255,0.9);
+}
+
+/* Modal with enhanced glow */
+.modal{
+  position:absolute;
+  inset:0;
+  background:rgba(0,0,0,0.85);
+  backdrop-filter:blur(10px);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:10;
+}
+.modal.active{display:flex}
+
+.modal-box{
+  width:92%;
+  background:rgba(255,255,255,0.08);
+  backdrop-filter:blur(30px);
+  border-radius:26px;
+  padding:20px;
+  animation:pop .4s ease;
+  border:1px solid rgba(255,255,255,0.2);
+  box-shadow:
+    0 20px 60px rgba(0,0,0,0.5),
+    0 0 50px currentColor;
+  position:relative;
+  overflow:hidden;
+  transition:all 0.5s ease;
+}
+
+.modal-box::before {
+  content:'';
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  bottom:0;
+  background:linear-gradient(135deg, 
+    rgba(255,255,255,0.1) 0%,
+    rgba(255,255,255,0.1) 100%);
+  z-index:-1;
+  opacity:0.5;
+}
+
+@keyframes pop{
+  from{
+    transform:scale(.85);
+    opacity:0;
+    box-shadow:0 0 0 rgba(0,0,0,0);
+  }
+  to{
+    transform:scale(1);
+    opacity:1;
+    box-shadow:
+      0 20px 60px rgba(0,0,0,0.5),
+      0 0 50px currentColor;
+  }
+}
+
+.modal-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:5px;
+}
+.modal-header h2{
+  font-size:18px;
+  font-weight:600;
+  color:#fff;
+  text-shadow:0 0 20px currentColor;
+  transition:all 0.5s ease;
+}
+.modal-sub{
+  font-size:11px;
+  opacity:.8;
+  margin-bottom:15px;
+  color:rgba(255,255,255,0.8);
+}
+
+/* Live chart with glow */
+.live-chart{
+  height:150px;
+  margin:12px 0;
+  position:relative;
+}
+.live-chart svg{
+  width:100%;
+  height:100%;
+  filter:drop-shadow(0 0 10px currentColor);
+}
+.chart-path{
+  fill:none;
+  stroke:url(#grad);
+  stroke-width:3;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+  filter:drop-shadow(0 0 8px currentColor);
+  transition:all 0.5s ease;
+}
+
+/* Enhanced Metrics with glow */
+.metrics{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-top:15px;
+}
+.metric{
+  background:rgba(255,255,255,0.05);
+  padding:12px;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,0.1);
+  backdrop-filter:blur(5px);
+  transition:all 0.3s;
+}
+.metric:hover {
+  background:rgba(255,255,255,0.08);
+  border-color:currentColor;
+  transform:translateY(-2px);
+  box-shadow:0 5px 20px currentColor;
+}
+.metric span{
+  font-size:11px;
+  opacity:.7;
+  display:block;
+  margin-bottom:4px;
+  color:rgba(255,255,255,0.7);
+}
+.metric strong{
+  display:block;
+  font-size:13px;
+  font-weight:600;
+  color:#fff;
+}
+
+.positive{
+  text-shadow:0 0 10px currentColor;
+  animation:positive-glow 2s infinite alternate;
+}
+.negative{
+  text-shadow:0 0 10px currentColor;
+  animation:negative-glow 2s infinite alternate;
+}
+.neutral{
+  text-shadow:0 0 8px currentColor;
+}
+
+.close{
+  text-align:center;
+  margin-top:12px;
+  font-size:12px;
+  opacity:.7;
+  cursor:pointer;
+  padding:8px;
+  border-radius:10px;
+  background:rgba(255,255,255,0.05);
+  border:1px solid rgba(255,255,255,0.1);
+  transition:all 0.3s;
+  backdrop-filter:blur(5px);
+  color:#fff;
+}
+.close:hover{
+  background:rgba(255,255,255,0.1);
+  opacity:1;
+  border-color:currentColor;
+  box-shadow:0 0 15px currentColor;
+}
+
+/* Theme-specific styles */
+.theme-0 {
+  /* Cyber Neon (Default) */
+  --primary-color: #00f2fe;
+  --secondary-color: #7f00ff;
+  --accent-color: #ff00ff;
+  --positive-color: #00ffb0;
+  --negative-color: #ff5c5c;
+  --neutral-color: #ffd36a;
+}
+
+.theme-1 {
+  /* Sunset Glow */
+  --primary-color: #ff6b6b;
+  --secondary-color: #ffd93d;
+  --accent-color: #ff8e53;
+  --positive-color: #6bff9d;
+  --negative-color: #ff4757;
+  --neutral-color: #ffd93d;
+}
+
+.theme-2 {
+  /* Ocean Wave */
+  --primary-color: #00ceff;
+  --secondary-color: #00ffea;
+  --accent-color: #0077ff;
+  --positive-color: #00ff9d;
+  --negative-color: #ff416c;
+  --neutral-color: #ffde59;
+}
+
+.theme-3 {
+  /* Purple Haze */
+  --primary-color: #9d4edd;
+  --secondary-color: #ff9e00;
+  --accent-color: #ff6d00;
+  --positive-color: #00ff9d;
+  --negative-color: #ff416c;
+  --neutral-color: #ffde59;
+}
+
+.theme-4 {
+  /* Electric Lime */
+  --primary-color: #00ff9d;
+  --secondary-color: #00f2fe;
+  --accent-color: #9d4edd;
+  --positive-color: #00ff9d;
+  --negative-color: #ff416c;
+  --neutral-color: #ffde59;
+}
+
+.theme-5 {
+  /* Candy Pink */
+  --primary-color: #ff6b9d;
+  --secondary-color: #ffd166;
+  --accent-color: #06d6a0;
+  --positive-color: #06d6a0;
+  --negative-color: #ef476f;
+  --neutral-color: #ffd166;
+}
+
+.theme-6 {
+  /* Golden Hour */
+  --primary-color: #ffd166;
+  --secondary-color: #06d6a0;
+  --accent-color: #118ab2;
+  --positive-color: #06d6a0;
+  --negative-color: #ef476f;
+  --neutral-color: #ffd166;
+}
+
+.theme-7 {
+  /* Galactic Blue */
+  --primary-color: #5a67d8;
+  --secondary-color: #00f2fe;
+  --accent-color: #9f7aea;
+  --positive-color: #48bb78;
+  --negative-color: #f56565;
+  --neutral-color: #ed8936;
+}
+
+.theme-8 {
+  /* Tropical Paradise */
+  --primary-color: #00ff9d;
+  --secondary-color: #00f2fe;
+  --accent-color: #ff6b6b;
+  --positive-color: #00ff9d;
+  --negative-color: #ff6b6b;
+  --neutral-color: #ffde59;
+}
+
+.theme-9 {
+  /* Fiery Red */
+  --primary-color: #ff4757;
+  --secondary-color: #ff3838;
+  --accent-color: #ff9f1a;
+  --positive-color: #00ff9d;
+  --negative-color: #ff4757;
+  --neutral-color: #ffde59;
+}
+
+/* Apply theme colors - FIXED: Removed problematic background-clip:text */
+body.theme-0 .ambient-cyan { background:radial-gradient(circle, var(--primary-color) 0%, transparent 70%); }
+body.theme-0 .ambient-purple { background:radial-gradient(circle, var(--secondary-color) 0%, transparent 70%); }
+body.theme-0 .ambient-pink { background:radial-gradient(circle, var(--accent-color) 0%, transparent 70%); }
+body.theme-0 .header h3 { color: var(--primary-color); }
+body.theme-0 .live-indicator { background:linear-gradient(135deg, rgba(255,76,76,0.3), rgba(255,0,0,0.2)); border-color:rgba(255,76,76,0.3); }
+body.theme-0 .live-dot { background:#ff4c4c; }
+body.theme-0 .tab.active { box-shadow:0 4px 20px rgba(0,242,254,0.3); border-color:rgba(0,242,254,0.4); }
+body.theme-0 .tab.active::before { background:linear-gradient(135deg, rgba(0,242,254,0.3), rgba(127,0,255,0.3)); }
+body.theme-0 .item h4 { color: var(--primary-color); }
+body.theme-0 .positive-rupee, body.theme-0 .positive-percent { color:var(--positive-color); }
+body.theme-0 .negative-rupee, body.theme-0 .negative-percent { color:var(--negative-color); }
+body.theme-0 .positive { color:var(--positive-color); }
+body.theme-0 .negative { color:var(--negative-color); }
+body.theme-0 .neutral { color:var(--neutral-color); }
+
+/* Repeat for all themes - FIXED */
+body.theme-1 .ambient-cyan { background:radial-gradient(circle, var(--primary-color) 0%, transparent 70%); }
+body.theme-1 .ambient-purple { background:radial-gradient(circle, var(--secondary-color) 0%, transparent 70%); }
+body.theme-1 .ambient-pink { background:radial-gradient(circle, var(--accent-color) 0%, transparent 70%); }
+body.theme-1 .header h3 { color: var(--primary-color); }
+body.theme-1 .live-indicator { background:linear-gradient(135deg, rgba(255,107,107,0.3), rgba(255,0,0,0.2)); border-color:rgba(255,107,107,0.3); }
+body.theme-1 .live-dot { background:var(--primary-color); }
+body.theme-1 .tab.active { box-shadow:0 4px 20px rgba(255,107,107,0.3); border-color:rgba(255,107,107,0.4); }
+body.theme-1 .tab.active::before { background:linear-gradient(135deg, rgba(255,107,107,0.3), rgba(255,217,61,0.3)); }
+body.theme-1 .item h4 { color: var(--primary-color); }
+body.theme-1 .positive-rupee, body.theme-1 .positive-percent { color:var(--positive-color); }
+body.theme-1 .negative-rupee, body.theme-1 .negative-percent { color:var(--negative-color); }
+body.theme-1 .positive { color:var(--positive-color); }
+body.theme-1 .negative { color:var(--negative-color); }
+body.theme-1 .neutral { color:var(--neutral-color); }
+
+body.theme-2 .ambient-cyan { background:radial-gradient(circle, var(--primary-color) 0%, transparent 70%); }
+body.theme-2 .ambient-purple { background:radial-gradient(circle, var(--secondary-color) 0%, transparent 70%); }
+body.theme-2 .ambient-pink { background:radial-gradient(circle, var(--accent-color) 0%, transparent 70%); }
+body.theme-2 .header h3 { color: var(--primary-color); }
+body.theme-2 .live-indicator { background:linear-gradient(135deg, rgba(0,206,255,0.3), rgba(0,119,255,0.2)); border-color:rgba(0,206,255,0.3); }
+body.theme-2 .live-dot { background:var(--primary-color); }
+body.theme-2 .tab.active { box-shadow:0 4px 20px rgba(0,206,255,0.3); border-color:rgba(0,206,255,0.4); }
+body.theme-2 .tab.active::before { background:linear-gradient(135deg, rgba(0,206,255,0.3), rgba(0,255,234,0.3)); }
+body.theme-2 .item h4 { color: var(--primary-color); }
+body.theme-2 .positive-rupee, body.theme-2 .positive-percent { color:var(--positive-color); }
+body.theme-2 .negative-rupee, body.theme-2 .negative-percent { color:var(--negative-color); }
+body.theme-2 .positive { color:var(--positive-color); }
+body.theme-2 .negative { color:var(--negative-color); }
+body.theme-2 .neutral { color:var(--neutral-color); }
+
+body.theme-3 .ambient-cyan { background:radial-gradient(circle, var(--primary-color) 0%, transparent 70%); }
+body.theme-3 .ambient-purple { background:radial-gradient(circle, var(--secondary-color) 0%, transparent 70%); }
+body.theme-3 .ambient-pink { background:radial-gradient(circle, var(--accent-color) 0%, transparent 70%); }
+body.theme-3 .header h3 { color: var(--primary-color); }
+body.theme-3 .live-indicator { background:linear-gradient(135deg, rgba(157,78,221,0.3), rgba(255,158,0,0.2)); border-color:rgba(157,78,221,0.3); }
+body.theme-3 .live-dot { background:var(--primary-color); }
+body.theme-3 .tab.active { box-shadow:0 4px 20px rgba(157,78,221,0.3); border-color:rgba(157,78,221,0.4); }
+body.theme-3 .tab.active::before { background:linear-gradient(135deg, rgba(157,78,221,0.3), rgba(255,158,0,0.3)); }
+body.theme-3 .item h4 { color: var(--primary-color); }
+body.theme-3 .positive-rupee, body.theme-3 .positive-percent { color:var(--positive-color); }
+body.theme-3 .negative-rupee, body.theme-3 .negative-percent { color:var(--negative-color); }
+body.theme-3 .positive { color:var(--positive-color); }
+body.theme-3 .negative { color:var(--negative-color); }
+body.theme-3 .neutral { color:var(--neutral-color); }
+
+body.theme-4 .ambient-cyan { background:radial-gradient(circle, var(--primary-color) 0%, transparent 70%); }
+body.theme-4 .ambient-purple { background:radial-gradient(circle, var(--secondary-color) 0%, transparent 70%); }
+body.theme-4 .ambient-pink { background:radial-gradient(circle, var(--accent-color) 0%, transparent 70%); }
+body.theme-4 .header h3 { color: var(--primary-color); }
+body.theme-4 .live-indicator { background:linear-gradient(135deg, rgba(0,255,157,0.3), rgba(0,242,254,0.2)); border-color:rgba(0,255,157,0.3); }
+body.theme-4 .live-dot { background:var(--primary-color); }
+body.theme-4 .tab.active { box-shadow:0 4px 20px rgba(0,255,157,0.3); border-color:rgba(0,255,157,0.4); }
+body.theme-4 .tab.active::before { background:linear-gradient(135deg, rgba(0,255,157,0.3), rgba(0,242,254,0.3)); }
+body.theme-4 .item h4 { color: var(--primary-color); }
+body.theme-4 .positive-rupee, body.theme-4 .positive-percent { color:var(--positive-color); }
+body.theme-4 .negative-rupee, body.theme-4 .negative-percent { color:var(--negative-color); }
+body.theme-4 .positive { color:var(--positive-color); }
+body.theme-4 .negative { color:var(--negative-color); }
+body.theme-4 .neutral { color:var(--neutral-color); }
+
+body.theme-5 .ambient-cyan { background:radial-gradient(circle, var(--primary-color) 0%, transparent 70%); }
+body.theme-5 .ambient-purple { background:radial-gradient(circle, var(--secondary-color) 0%, transparent 70%); }
+body.theme-5 .ambient-pink { background:radial-gradient(circle, var(--accent-color) 0%, transparent 70%); }
+body.theme-5 .header h3 { color: var(--primary-color); }
+body.theme-5 .live-indicator { background:linear-gradient(135deg, rgba(255,107,157,0.3), rgba(255,209,102,0.2)); border-color:rgba(255,107,157,0.3); }
+body.theme-5 .live-dot { background:var(--primary-color); }
+body.theme-5 .tab.active { box-shadow:0 4px 20px rgba(255,107,157,0.3); border-color:rgba(255,107,157,0.4); }
+body.theme-5 .tab.active::before { background:linear-gradient(135deg, rgba(255,107,157,0.3), rgba(255,209,102,0.3)); }
+body.theme-5 .item h4 { color: var(--primary-color); }
+body.theme-5 .positive-rupee, body.theme-5 .positive-percent { color:var(--positive-color); }
+body.theme-5 .negative-rupee, body.theme-5 .negative-percent { color:var(--negative-color); }
+body.theme-5 .positive { color:var(--positive-color); }
+body.theme-5 .negative { color:var(--negative-color); }
+body.theme-5 .neutral { color:var(--neutral-color); }
+
+body.theme-6 .ambient-cyan { background:radial-gradient(circle, var(--primary-color) 0%, transparent 70%); }
+body.theme-6 .ambient-purple { background:radial-gradient(circle, var(--secondary-color) 0%, transparent 70%); }
+body.theme-6 .ambient-pink { background:radial-gradient(circle, var(--accent-color) 0%, transparent 70%); }
+body.theme-6 .header h3 { color: var(--primary-color); }
+body.theme-6 .live-indicator { background:linear-gradient(135deg, rgba(255,209,102,0.3), rgba(6,214,160,0.2)); border-color:rgba(255,209,102,0.3); }
+body.theme-6 .live-dot { background:var(--primary-color); }
+body.theme-6 .tab.active { box-shadow:0 4px 20px rgba(255,209,102,0.3); border-color:rgba(255,209,102,0.4); }
+body.theme-6 .tab.active::before { background:linear-gradient(135deg, rgba(255,209,102,0.3), rgba(6,214,160,0.3)); }
+body.theme-6 .item h4 { color: var(--primary-color); }
+body.theme-6 .positive-rupee, body.theme-6 .positive-percent { color:var(--positive-color); }
+body.theme-6 .negative-rupee, body.theme-6 .negative-percent { color:var(--negative-color); }
+body.theme-6 .positive { color:var(--positive-color); }
+body.theme-6 .negative { color:var(--negative-color); }
+body.theme-6 .neutral { color:var(--neutral-color); }
+
+body.theme-7 .ambient-cyan { background:radial-gradient(circle, var(--primary-color) 0%, transparent 70%); }
+body.theme-7 .ambient-purple { background:radial-gradient(circle, var(--secondary-color) 0%, transparent 70%); }
+body.theme-7 .ambient-pink { background:radial-gradient(circle, var(--accent-color) 0%, transparent 70%); }
+body.theme-7 .header h3 { color: var(--primary-color); }
+body.theme-7 .live-indicator { background:linear-gradient(135deg, rgba(90,103,216,0.3), rgba(0,242,254,0.2)); border-color:rgba(90,103,216,0.3); }
+body.theme-7 .live-dot { background:var(--primary-color); }
+body.theme-7 .tab.active { box-shadow:0 4px 20px rgba(90,103,216,0.3); border-color:rgba(90,103,216,0.4); }
+body.theme-7 .tab.active::before { background:linear-gradient(135deg, rgba(90,103,216,0.3), rgba(0,242,254,0.3)); }
+body.theme-7 .item h4 { color: var(--primary-color); }
+body.theme-7 .positive-rupee, body.theme-7 .positive-percent { color:var(--positive-color); }
+body.theme-7 .negative-rupee, body.theme-7 .negative-percent { color:var(--negative-color); }
+body.theme-7 .positive { color:var(--positive-color); }
+body.theme-7 .negative { color:var(--negative-color); }
+body.theme-7 .neutral { color:var(--neutral-color); }
+
+body.theme-8 .ambient-cyan { background:radial-gradient(circle, var(--primary-color) 0%, transparent 70%); }
+body.theme-8 .ambient-purple { background:radial-gradient(circle, var(--secondary-color) 0%, transparent 70%); }
+body.theme-8 .ambient-pink { background:radial-gradient(circle, var(--accent-color) 0%, transparent 70%); }
+body.theme-8 .header h3 { color: var(--primary-color); }
+body.theme-8 .live-indicator { background:linear-gradient(135deg, rgba(0,255,157,0.3), rgba(0,242,254,0.2)); border-color:rgba(0,255,157,0.3); }
+body.theme-8 .live-dot { background:var(--primary-color); }
+body.theme-8 .tab.active { box-shadow:0 4px 20px rgba(0,255,157,0.3); border-color:rgba(0,255,157,0.4); }
+body.theme-8 .tab.active::before { background:linear-gradient(135deg, rgba(0,255,157,0.3), rgba(0,242,254,0.3)); }
+body.theme-8 .item h4 { color: var(--primary-color); }
+body.theme-8 .positive-rupee, body.theme-8 .positive-percent { color:var(--positive-color); }
+body.theme-8 .negative-rupee, body.theme-8 .negative-percent { color:var(--negative-color); }
+body.theme-8 .positive { color:var(--positive-color); }
+body.theme-8 .negative { color:var(--negative-color); }
+body.theme-8 .neutral { color:var(--neutral-color); }
+
+body.theme-9 .ambient-cyan { background:radial-gradient(circle, var(--primary-color) 0%, transparent 70%); }
+body.theme-9 .ambient-purple { background:radial-gradient(circle, var(--secondary-color) 0%, transparent 70%); }
+body.theme-9 .ambient-pink { background:radial-gradient(circle, var(--accent-color) 0%, transparent 70%); }
+body.theme-9 .header h3 { color: var(--primary-color); }
+body.theme-9 .live-indicator { background:linear-gradient(135deg, rgba(255,71,87,0.3), rgba(255,56,56,0.2)); border-color:rgba(255,71,87,0.3); }
+body.theme-9 .live-dot { background:var(--primary-color); }
+body.theme-9 .tab.active { box-shadow:0 4px 20px rgba(255,71,87,0.3); border-color:rgba(255,71,87,0.4); }
+body.theme-9 .tab.active::before { background:linear-gradient(135deg, rgba(255,71,87,0.3), rgba(255,56,56,0.3)); }
+body.theme-9 .item h4 { color: var(--primary-color); }
+body.theme-9 .positive-rupee, body.theme-9 .positive-percent { color:var(--positive-color); }
+body.theme-9 .negative-rupee, body.theme-9 .negative-percent { color:var(--negative-color); }
+body.theme-9 .positive { color:var(--positive-color); }
+body.theme-9 .negative { color:var(--negative-color); }
+body.theme-9 .neutral { color:var(--neutral-color); }
+
+/* Apply current theme colors dynamically */
+:root {
+  --current-primary: #00f2fe;
+  --current-secondary: #7f00ff;
+  --current-accent: #ff00ff;
+  --current-positive: #00ffb0;
+  --current-negative: #ff5c5c;
+  --current-neutral: #ffd36a;
+}
+
+/* FIXED: Removed problematic background-clip:text rules */
+.live-indicator,
+.live-dot,
+.tab.active,
+.item:hover,
+.metric:hover,
+.close:hover,
+.positive-rupee,
+.positive-percent,
+.negative-rupee,
+.negative-percent,
+.positive,
+.negative,
+.neutral {
+  color: var(--current-primary);
+}
+
+/* FIXED: Changed to regular color instead of gradient background-clip */
+.item h4,
+.modal-header h2,
+.header h3 {
+  color: var(--current-primary);
+}
+
+.tab.active {
+  border-color: var(--current-primary);
+  box-shadow: 0 4px 20px color-mix(in srgb, var(--current-primary) 30%, transparent);
+}
+
+.tab.active::before {
+  background: linear-gradient(135deg, color-mix(in srgb, var(--current-primary) 30%, transparent), color-mix(in srgb, var(--current-secondary) 30%, transparent));
+}
+
+.chart-path {
+  stroke: url(#grad);
+}
+
+/* Update gradient defs for each theme */
+#grad stop:nth-child(1) {
+  stop-color: var(--current-primary);
+}
+#grad stop:nth-child(2) {
+  stop-color: var(--current-secondary);
+}
+</style>
+</head>
+
+<body class="theme-0">
+<!-- Theme Toggle Button -->
+<div class="theme-toggle" id="themeToggle">
+  <i>🎨</i>
+</div>
+
+<!-- Ambient Lights -->
+<div class="ambient-light ambient-cyan"></div>
+<div class="ambient-light ambient-purple"></div>
+<div class="ambient-light ambient-pink"></div>
+
+<!-- Animated Particles -->
+<div class="particles" id="particles"></div>
+
+<div class="frame">
+
+  <div class="header">
+    <h3>NeoMarket</h3>
+    <div class="live-indicator">
+      <div class="live-dot"></div>
+      LIVE
+    </div>
+  </div>
+
+  <div class="tabs">
+    <div class="tab active" onclick="showStocks()">
+      <span>Stocks</span>
+    </div>
+    <div class="tab" onclick="showFunds()">
+      <span>Mutual Funds</span>
+    </div>
+  </div>
+
+  <!-- STOCKS -->
+  <div id="stocks">
+    <!-- Stocks will be dynamically generated -->
+  </div>
+
+  <!-- FUNDS -->
+  <div id="funds" style="display:none">
+    <div class="item" onclick="openFund('Nebula Growth Fund','₹68.2','+0.4','12%','High','1.1%','7+ Years','Aggressive')">
+      <div class="item-content">
+        <h4>Nebula Growth Fund</h4>
+        <span>Growth Oriented</span>
+      </div>
+      <div class="perf-indicator">
+        <div class="perf-rupee positive-rupee">+0.4</div>
+        <div class="perf-percent positive-percent">+12%</div>
+      </div>
+    </div>
+    <div class="item" onclick="openFund('Orion Stability Fund','₹41.5','+0.1','6%','Low','0.6%','5+ Years','Conservative')">
+      <div class="item-content">
+        <h4>Orion Stability Fund</h4>
+        <span>Capital Protection</span>
+      </div>
+      <div class="perf-indicator">
+        <div class="perf-rupee positive-rupee">+0.1</div>
+        <div class="perf-percent positive-percent">+6%</div>
+      </div>
+    </div>
+    <div class="item" onclick="openFund('Quantum Leaf Fund','₹92.8','+0.3','9%','Medium','0.9%','6+ Years','Balanced')">
+      <div class="item-content">
+        <h4>Quantum Leaf Fund</h4>
+        <span>Balanced Strategy</span>
+      </div>
+      <div class="perf-indicator">
+        <div class="perf-rupee positive-rupee">+0.3</div>
+        <div class="perf-percent positive-percent">+9%</div>
+      </div>
+    </div>
+    <div class="item" onclick="openFund('Aurora Flex Fund','₹54.4','+0.5','11%','Medium','1.0%','Flexible','Adaptive')">
+      <div class="item-content">
+        <h4>Aurora Flex Fund</h4>
+        <span>Dynamic Allocation</span>
+      </div>
+      <div class="perf-indicator">
+        <div class="perf-rupee positive-rupee">+0.5</div>
+        <div class="perf-percent positive-percent">+11%</div>
+      </div>
+    </div>
+    <div class="item" onclick="openFund('Helios Value Fund','₹77.1','+0.2','7%','Low','0.7%','Long Term','Value Investor')">
+      <div class="item-content">
+        <h4>Helios Value Fund</h4>
+        <span>Value Focus</span>
+      </div>
+      <div class="perf-indicator">
+        <div class="perf-rupee positive-rupee">+0.2</div>
+        <div class="perf-percent positive-percent">+7%</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL -->
+  <div class="modal" id="modal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h2 id="mTitle"></h2>
+        <div class="live-indicator">
+          <div class="live-dot"></div>
+          LIVE
+        </div>
+      </div>
+      <p class="modal-sub" id="mSub"></p>
+
+      <div class="live-chart">
+        <svg viewBox="0 0 300 150" id="mainChart">
+          <defs>
+            <linearGradient id="grad">
+              <stop offset="0%" stop-color="#00f2fe"/>
+              <stop offset="100%" stop-color="#7f00ff"/>
+            </linearGradient>
+          </defs>
+          <path class="chart-path" d=""/>
+        </svg>
+      </div>
+
+      <div class="metrics" id="metrics"></div>
+
+      <div class="close" onclick="closeModal()">Tap to close</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// Theme Management
+let currentTheme = 0;
+const totalThemes = 10;
+
+const themes = [
+  {
+    name: "Cyber Neon",
+    primary: "#00f2fe",
+    secondary: "#7f00ff",
+    accent: "#ff00ff",
+    positive: "#00ffb0",
+    negative: "#ff5c5c",
+    neutral: "#ffd36a"
+  },
+  {
+    name: "Sunset Glow",
+    primary: "#ff6b6b",
+    secondary: "#ffd93d",
+    accent: "#ff8e53",
+    positive: "#6bff9d",
+    negative: "#ff4757",
+    neutral: "#ffd93d"
+  },
+  {
+    name: "Ocean Wave",
+    primary: "#00ceff",
+    secondary: "#00ffea",
+    accent: "#0077ff",
+    positive: "#00ff9d",
+    negative: "#ff416c",
+    neutral: "#ffde59"
+  },
+  {
+    name: "Purple Haze",
+    primary: "#9d4edd",
+    secondary: "#ff9e00",
+    accent: "#ff6d00",
+    positive: "#00ff9d",
+    negative: "#ff416c",
+    neutral: "#ffde59"
+  },
+  {
+    name: "Electric Lime",
+    primary: "#00ff9d",
+    secondary: "#00f2fe",
+    accent: "#9d4edd",
+    positive: "#00ff9d",
+    negative: "#ff416c",
+    neutral: "#ffde59"
+  },
+  {
+    name: "Candy Pink",
+    primary: "#ff6b9d",
+    secondary: "#ffd166",
+    accent: "#06d6a0",
+    positive: "#06d6a0",
+    negative: "#ef476f",
+    neutral: "#ffd166"
+  },
+  {
+    name: "Golden Hour",
+    primary: "#ffd166",
+    secondary: "#06d6a0",
+    accent: "#118ab2",
+    positive: "#06d6a0",
+    negative: "#ef476f",
+    neutral: "#ffd166"
+  },
+  {
+    name: "Galactic Blue",
+    primary: "#5a67d8",
+    secondary: "#00f2fe",
+    accent: "#9f7aea",
+    positive: "#48bb78",
+    negative: "#f56565",
+    neutral: "#ed8936"
+  },
+  {
+    name: "Tropical Paradise",
+    primary: "#00ff9d",
+    secondary: "#00f2fe",
+    accent: "#ff6b6b",
+    positive: "#00ff9d",
+    negative: "#ff6b6b",
+    neutral: "#ffde59"
+  },
+  {
+    name: "Fiery Red",
+    primary: "#ff4757",
+    secondary: "#ff3838",
+    accent: "#ff9f1a",
+    positive: "#00ff9d",
+    negative: "#ff4757",
+    neutral: "#ffde59"
+  }
+];
+
+function applyTheme(themeIndex) {
+  const theme = themes[themeIndex];
+  
+  // Update CSS variables
+  document.documentElement.style.setProperty('--current-primary', theme.primary);
+  document.documentElement.style.setProperty('--current-secondary', theme.secondary);
+  document.documentElement.style.setProperty('--current-accent', theme.accent);
+  document.documentElement.style.setProperty('--current-positive', theme.positive);
+  document.documentElement.style.setProperty('--current-negative', theme.negative);
+  document.documentElement.style.setProperty('--current-neutral', theme.neutral);
+  
+  // Update body class
+  document.body.className = `theme-${themeIndex}`;
+  
+  // Update gradient in chart
+  const gradStop1 = document.querySelector('#grad stop:nth-child(1)');
+  const gradStop2 = document.querySelector('#grad stop:nth-child(2)');
+  if (gradStop1) gradStop1.setAttribute('stop-color', theme.primary);
+  if (gradStop2) gradStop2.setAttribute('stop-color', theme.secondary);
+  
+  // Update particles color
+  updateParticlesColor(theme.primary);
+  
+  // Update mini-graph colors for existing stocks
+  updateStockColors(theme.positive, theme.negative);
+  
+  currentTheme = themeIndex;
+}
+
+function updateParticlesColor(color) {
+  const particles = document.querySelectorAll('.particle');
+  particles.forEach(particle => {
+    particle.style.background = color;
+  });
+}
+
+function updateStockColors(positiveColor, negativeColor) {
+  const stockElements = document.querySelectorAll('#stocks .item');
+  stockElements.forEach((element, index) => {
+    const stock = stocksData[index];
+    if (stock) {
+      const isPositive = stock.dailyChange >= 0;
+      const graphPath = element.querySelector('.mini-graph path');
+      if (graphPath) {
+        graphPath.style.stroke = isPositive ? positiveColor : negativeColor;
+      }
+      
+      // Update performance indicator colors
+      const rupeeElement = element.querySelector('.perf-rupee');
+      const percentElement = element.querySelector('.perf-percent');
+      if (rupeeElement && percentElement) {
+        if (isPositive) {
+          rupeeElement.style.color = positiveColor;
+          percentElement.style.color = positiveColor;
+        } else {
+          rupeeElement.style.color = negativeColor;
+          percentElement.style.color = negativeColor;
+        }
+      }
+    }
+  });
+}
+
+function nextTheme() {
+  currentTheme = (currentTheme + 1) % totalThemes;
+  applyTheme(currentTheme);
+  
+  // Update modal if open
+  if (currentStock) {
+    const chartPath = document.querySelector('#mainChart .chart-path');
+    if (chartPath) {
+      chartPath.style.stroke = currentStock.dailyChange >= 0 ? themes[currentTheme].positive : themes[currentTheme].negative;
+    }
+  }
+}
+
+// Create animated particles
+function createParticles() {
+  const particlesContainer = document.getElementById('particles');
+  const particleCount = 50;
+  
+  for(let i = 0; i < particleCount; i++) {
+    const particle = document.createElement('div');
+    particle.className = 'particle';
+    
+    // Random properties
+    const size = Math.random() * 2 + 1;
+    const posX = Math.random() * 100;
+    const delay = Math.random() * 10;
+    const duration = Math.random() * 10 + 10;
+    const tx = Math.random() * 100 - 50;
+    
+    particle.style.width = `${size}px`;
+    particle.style.height = `${size}px`;
+    particle.style.left = `${posX}%`;
+    particle.style.animationDelay = `${delay}s`;
+    particle.style.animationDuration = `${duration}s`;
+    particle.style.setProperty('--tx', `${tx}px`);
+    
+    // Use current theme color
+    particle.style.background = themes[currentTheme].primary;
+    
+    particlesContainer.appendChild(particle);
+  }
+}
+
+// Stock Data with initial values
+const stocksData = [
+  {
+    id: 'AURIX',
+    name: 'AURIX',
+    desc: 'Momentum Equity',
+    basePrice: 1824,
+    price: 1824,
+    dailyChange: 58,
+    dailyPercent: 3.2,
+    volatility: 'High',
+    mood: 'Bullish',
+    bias: 'Buy',
+    volume: '8.2M',
+    history: []
+  },
+  {
+    id: 'NOVA',
+    name: 'NOVA',
+    desc: 'Tech Focused',
+    basePrice: 940,
+    price: 940,
+    dailyChange: -10,
+    dailyPercent: -1.1,
+    volatility: 'Medium',
+    mood: 'Neutral',
+    bias: 'Hold',
+    volume: '4.1M',
+    history: []
+  },
+  {
+    id: 'ZENTRA',
+    name: 'ZENTRA',
+    desc: 'Defensive Growth',
+    basePrice: 1280,
+    price: 1280,
+    dailyChange: 10,
+    dailyPercent: 0.8,
+    volatility: 'Low',
+    mood: 'Stable',
+    bias: 'Observe',
+    volume: '2.7M',
+    history: []
+  },
+  {
+    id: 'LYRON',
+    name: 'LYRON',
+    desc: 'Experimental Cap',
+    basePrice: 620,
+    price: 620,
+    dailyChange: 28,
+    dailyPercent: 4.6,
+    volatility: 'Extreme',
+    mood: 'Speculative',
+    bias: 'High Risk',
+    volume: '6.9M',
+    history: []
+  },
+  {
+    id: 'VELOX',
+    name: 'VELOX',
+    desc: 'Momentum Play',
+    basePrice: 2120,
+    price: 2120,
+    dailyChange: 44,
+    dailyPercent: 2.1,
+    volatility: 'High',
+    mood: 'Bullish',
+    bias: 'Buy',
+    volume: '9.4M',
+    history: []
+  }
+];
+
+let currentStock = null;
+let updateInterval;
+
+// Initialize stocks with history
+function initStocks() {
+  stocksData.forEach(stock => {
+    for(let i = 0; i < 20; i++) {
+      stock.history.push(stock.basePrice + Math.random() * 100 - 50);
+    }
+  });
+}
+
+// Generate random price movement
+function randomMovement(base, volatility) {
+  const volMap = { 'Low': 0.2, 'Medium': 0.5, 'High': 1, 'Extreme': 2 };
+  const volatilityFactor = volMap[volatility] || 0.5;
+  const change = (Math.random() - 0.5) * volatilityFactor * 2;
+  return base * (1 + change / 100);
+}
+
+// Update stock prices
+function updateStockPrices() {
+  stocksData.forEach(stock => {
+    // Update price
+    const newPrice = randomMovement(stock.price, stock.volatility);
+    stock.price = Math.round(newPrice * 100) / 100;
+    
+    // Update daily change
+    stock.dailyChange = Math.round((stock.price - stock.basePrice) * 100) / 100;
+    stock.dailyPercent = Math.round((stock.dailyChange / stock.basePrice) * 10000) / 100;
+    
+    // Update history
+    stock.history.push(stock.price);
+    if(stock.history.length > 30) stock.history.shift();
+    
+    // Update volume randomly
+    const volumeChange = Math.random() > 0.5 ? 1 : -1;
+    const currentVol = parseFloat(stock.volume);
+    const newVol = Math.max(0.1, currentVol + volumeChange * Math.random() * 0.5);
+    stock.volume = newVol.toFixed(1) + 'M';
+  });
+  
+  renderStocks();
+  if(currentStock) updateModal(currentStock);
+}
+
+// Render stocks list
+function renderStocks() {
+  const container = document.getElementById('stocks');
+  container.innerHTML = '';
+  
+  stocksData.forEach(stock => {
+    const isPositive = stock.dailyChange >= 0;
+    const rupeeColor = isPositive ? 'positive-rupee' : 'negative-rupee';
+    const percentColor = isPositive ? 'positive-percent' : 'negative-percent';
+    const rupeeSign = stock.dailyChange >= 0 ? '+' : '';
+    const percentSign = stock.dailyPercent >= 0 ? '+' : '';
+    
+    // Generate mini graph SVG
+    const graphPoints = generateMiniGraph(stock.history);
+    
+    const stockElement = document.createElement('div');
+    stockElement.className = 'item';
+    stockElement.onclick = () => openStock(stock);
+    
+    stockElement.innerHTML = `
+      <div class="item-content">
+        <h4>${stock.name}</h4>
+        <span>${stock.desc}</span>
+        <div class="current-price">₹${stock.price.toFixed(2)}</div>
+      </div>
+      <div class="mini-graph">
+        <svg viewBox="0 0 60 24">
+          <path d="${graphPoints}" fill="none" stroke="${isPositive ? themes[currentTheme].positive : themes[currentTheme].negative}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="perf-indicator">
+        <div class="perf-rupee ${rupeeColor}">${rupeeSign}₹${Math.abs(stock.dailyChange).toFixed(2)}</div>
+        <div class="perf-percent ${percentColor}">${percentSign}${Math.abs(stock.dailyPercent).toFixed(2)}%</div>
+      </div>
+    `;
+    
+    container.appendChild(stockElement);
+  });
+}
+
+// Generate mini graph points
+function generateMiniGraph(history) {
+  if(history.length < 2) return "M0,12 L60,12";
+  
+  const points = [];
+  const min = Math.min(...history);
+  const max = Math.max(...history);
+  const range = max - min || 1;
+  
+  history.slice(-10).forEach((value, i) => {
+    const x = (i / (history.length - 1)) * 60;
+    const y = 22 - ((value - min) / range) * 20;
+    points.push(`${i === 0 ? 'M' : 'L'}${x},${y}`);
+  });
+  
+  return points.join(' ');
+}
+
+// Generate main chart
+function generateMainChart(history) {
+  if(history.length < 2) return "M0,75 L300,75";
+  
+  const points = [];
+  const min = Math.min(...history);
+  const max = Math.max(...history);
+  const range = max - min || 1;
+  
+  history.forEach((value, i) => {
+    const x = (i / (history.length - 1)) * 300;
+    const y = 140 - ((value - min) / range) * 120;
+    points.push(`${i === 0 ? 'M' : 'L'}${x},${y}`);
+  });
+  
+  return points.join(' ');
+}
+
+// Open stock modal
+function openStock(stock) {
+  currentStock = stock;
+  
+  document.getElementById('mTitle').textContent = stock.name;
+  document.getElementById('mSub').textContent = "Live Equity Analysis";
+  
+  const isPositive = stock.dailyChange >= 0;
+  const rupeeSign = stock.dailyChange >= 0 ? '+' : '';
+  const percentSign = stock.dailyPercent >= 0 ? '+' : '';
+  
+  // Update metrics
+  document.getElementById('metrics').innerHTML = `
+    <div class="metric">
+      <span>Current Price</span>
+      <strong>₹${stock.price.toFixed(2)}</strong>
+    </div>
+    <div class="metric">
+      <span>Daily ₹ Change</span>
+      <strong class="${isPositive ? 'positive' : 'negative'}">${rupeeSign}₹${Math.abs(stock.dailyChange).toFixed(2)}</strong>
+    </div>
+    <div class="metric">
+      <span>Daily %</span>
+      <strong class="${isPositive ? 'positive' : 'negative'}">${percentSign}${Math.abs(stock.dailyPercent).toFixed(2)}%</strong>
+    </div>
+    <div class="metric">
+      <span>Volume</span>
+      <strong>${stock.volume}</strong>
+    </div>
+    <div class="metric">
+      <span>Volatility</span>
+      <strong class="neutral">${stock.volatility}</strong>
+    </div>
+    <div class="metric">
+      <span>Analyst Bias</span>
+      <strong class="${stock.bias === 'Buy' ? 'positive' : stock.bias === 'Sell' ? 'negative' : 'neutral'}">${stock.bias}</strong>
+    </div>
+  `;
+  
+  // Update chart
+  const chartPath = document.querySelector('#mainChart .chart-path');
+  chartPath.setAttribute('d', generateMainChart(stock.history));
+  chartPath.style.stroke = isPositive ? themes[currentTheme].positive : themes[currentTheme].negative;
+  
+  document.getElementById('modal').classList.add('active');
+}
+
+// Update modal with latest data
+function updateModal(stock) {
+  if(!document.getElementById('modal').classList.contains('active')) return;
+  
+  const isPositive = stock.dailyChange >= 0;
+  const rupeeSign = stock.dailyChange >= 0 ? '+' : '';
+  const percentSign = stock.dailyPercent >= 0 ? '+' : '';
+  
+  // Update metrics dynamically
+  const metrics = document.querySelectorAll('.metric strong');
+  if(metrics.length >= 6) {
+    metrics[0].textContent = `₹${stock.price.toFixed(2)}`;
+    metrics[1].textContent = `${rupeeSign}₹${Math.abs(stock.dailyChange).toFixed(2)}`;
+    metrics[1].className = isPositive ? 'positive' : 'negative';
+    metrics[2].textContent = `${percentSign}${Math.abs(stock.dailyPercent).toFixed(2)}%`;
+    metrics[2].className = isPositive ? 'positive' : 'negative';
+    metrics[3].textContent = stock.volume;
+  }
+  
+  // Update chart
+  const chartPath = document.querySelector('#mainChart .chart-path');
+  chartPath.setAttribute('d', generateMainChart(stock.history));
+  chartPath.style.stroke = isPositive ? themes[currentTheme].positive : themes[currentTheme].negative;
+}
+
+function openFund(name,nav,day,ytd,risk,expense,period,type){
+  currentStock = null;
+  document.getElementById('mTitle').textContent = name;
+  document.getElementById('mSub').textContent = "Mutual Fund Overview";
+  document.getElementById('metrics').innerHTML = `
+    <div class="metric"><span>NAV</span><strong>${nav}</strong></div>
+    <div class="metric"><span>Daily Change</span><strong class="positive">${day}</strong></div>
+    <div class="metric"><span>YTD Return</span><strong class="positive">${ytd}</strong></div>
+    <div class="metric"><span>Risk Level</span><strong class="neutral">${risk}</strong></div>
+    <div class="metric"><span>Expense Ratio</span><strong>${expense}</strong></div>
+    <div class="metric"><span>Ideal Investor</span><strong>${type}</strong></div>
+  `;
+  document.getElementById('modal').classList.add("active");
+}
+
+function closeModal(){
+  document.getElementById('modal').classList.remove("active");
+  currentStock = null;
+}
+
+function showStocks(){
+  document.getElementById('stocks').style.display="block"; 
+  document.getElementById('funds').style.display="none";
+  document.querySelectorAll('.tab')[0].classList.add('active');
+  document.querySelectorAll('.tab')[1].classList.remove('active');
+}
+
+function showFunds(){
+  document.getElementById('stocks').style.display="none"; 
+  document.getElementById('funds').style.display="block";
+  document.querySelectorAll('.tab')[1].classList.add('active');
+  document.querySelectorAll('.tab')[0].classList.remove('active');
+}
+
+// Initialize everything
+document.getElementById('themeToggle').addEventListener('click', nextTheme);
+createParticles();
+initStocks();
+renderStocks();
+applyTheme(0);
+updateInterval = setInterval(updateStockPrices, 2000);
+
+// Cleanup on page unload
+window.addEventListener('beforeunload', () => {
+  clearInterval(updateInterval);
+});
+</script>
+
+</body>
+</html>
